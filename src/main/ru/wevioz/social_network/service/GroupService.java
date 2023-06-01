@@ -15,7 +15,7 @@ public class GroupService implements EntityService<Group> {
 
     @Override
     public Group findById(int id) {
-        return this.groups.stream().
+        return groups.stream().
                 filter(group -> group.getId() == id).
                 findFirst().
                 get();
@@ -23,11 +23,11 @@ public class GroupService implements EntityService<Group> {
 
     @Override
     public void add(Group group) {
-        this.groups.add(group);
+        groups.add(group);
     }
 
     @Override
     public void remove(Group group) {
-        this.groups.remove(group);
+        groups.remove(group);
     }
 }

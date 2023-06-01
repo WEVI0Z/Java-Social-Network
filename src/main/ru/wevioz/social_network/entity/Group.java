@@ -3,7 +3,6 @@ package wevioz.social_network.entity;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import wevioz.social_network.entity.User;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -16,10 +15,10 @@ public class Group {
     private ArrayList<User> participants = new ArrayList<>();
 
     public void addUser(User user) {
-        this.participants.add(user);
+        participants.add(user);
     }
 
     public void removeUser(User user) {
-        this.participants.remove(user);
+        participants.remove(user);
     }
 }
