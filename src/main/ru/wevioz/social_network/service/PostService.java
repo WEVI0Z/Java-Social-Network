@@ -5,6 +5,7 @@ import wevioz.social_network.entity.Comment;
 import wevioz.social_network.entity.Group;
 import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
+import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.exception.TextLimitException;
 
 import java.util.ArrayList;
@@ -30,10 +31,14 @@ public class PostService implements EntityService<Post>{
         return  post;
     }
 
-    public List<Comment> getPostCommentsById(int id) {
-        Post post = findById(id).get();
+    public List<Comment> getPostCommentsById(int id) throws NotFoundException {
+        Post post = findById(id).orElse(null);
 
-        return post.getComments();
+        if(post != null) {
+            return post.getComments();
+        } else {
+            throw new NotFoundException("post");
+        }
     }
 
     @Override

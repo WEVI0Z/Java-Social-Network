@@ -3,6 +3,7 @@ package wevioz.social_network.service;
 import lombok.Getter;
 import wevioz.social_network.entity.Group;
 import wevioz.social_network.entity.User;
+import wevioz.social_network.exception.NotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,14 @@ public class GroupService implements EntityService<Group> {
                 findFirst();
     }
 
-    public List<User> getGroupUsersById(int id) {
-        Group group = findById(id).get();
+    public List<User> getGroupUsersById(int id) throws NotFoundException {
+        Group group = findById(id).orElse(null);
 
-        return group.getParticipants();
+        if(group != null) {
+            return group.getParticipants();
+        } else {
+            throw new NotFoundException("group");
+        }
     }
 
     @Override

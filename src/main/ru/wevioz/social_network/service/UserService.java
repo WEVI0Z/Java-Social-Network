@@ -3,6 +3,7 @@ package wevioz.social_network.service;
 import lombok.Getter;
 import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
+import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.exception.UniqueException;
 
 import java.util.ArrayList;
@@ -22,10 +23,14 @@ public class UserService implements EntityService<User> {
         return new User(nextId.getAndIncrement(), email);
     }
 
-    public List<Post> getUserPostsById(int id) {
-        User user = findById(id).get();
+    public List<Post> getUserPostsById(int id) throws NotFoundException {
+        User user = findById(id).orElse(null);
 
-        return user.getPosts();
+        if(user != null) {
+            return user.getPosts();
+        } else {
+            throw new NotFoundException("user");
+        }
     }
 
     @Override
