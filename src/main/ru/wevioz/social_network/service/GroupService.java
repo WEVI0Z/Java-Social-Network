@@ -2,8 +2,10 @@ package wevioz.social_network.service;
 
 import lombok.Getter;
 import wevioz.social_network.entity.Group;
+import wevioz.social_network.entity.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class GroupService implements EntityService<Group> {
@@ -19,6 +21,12 @@ public class GroupService implements EntityService<Group> {
                 filter(group -> group.getId() == id).
                 findFirst().
                 get();
+    }
+
+    public List<User> getGroupUsersById(int id) {
+        Group group = findById(id);
+
+        return group.getParticipants();
     }
 
     @Override

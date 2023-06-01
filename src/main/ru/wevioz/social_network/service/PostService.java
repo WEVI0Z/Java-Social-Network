@@ -1,11 +1,14 @@
 package wevioz.social_network.service;
 
 import lombok.Getter;
+import wevioz.social_network.entity.Comment;
+import wevioz.social_network.entity.Group;
 import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.TextLimitException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class PostService implements EntityService<Post>{
@@ -20,6 +23,12 @@ public class PostService implements EntityService<Post>{
         owner.addPost(post);
 
         return  post;
+    }
+
+    public List<Comment> getPostCommentsById(int id) {
+        Post post = findById(id);
+
+        return post.getComments();
     }
 
     @Override

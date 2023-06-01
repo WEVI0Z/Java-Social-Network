@@ -1,10 +1,12 @@
 package wevioz.social_network.service;
 
 import lombok.Getter;
+import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.UniqueException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 public class UserService implements EntityService<User> {
@@ -15,6 +17,12 @@ public class UserService implements EntityService<User> {
             throw new UniqueException("email");
         }
         return new User(email);
+    }
+
+    public List<Post> getUserPostsById(int id) {
+        User user = findById(id);
+
+        return user.getPosts();
     }
 
     @Override
