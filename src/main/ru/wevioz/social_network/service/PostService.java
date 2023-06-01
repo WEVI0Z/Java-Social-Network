@@ -3,6 +3,7 @@ package wevioz.social_network.service;
 import lombok.Getter;
 import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
+import wevioz.social_network.exception.TextLimitException;
 
 import java.util.ArrayList;
 
@@ -10,7 +11,11 @@ import java.util.ArrayList;
 public class PostService implements EntityService<Post>{
     private final ArrayList<Post> posts = new ArrayList<>();
 
-    public Post create(String content, User owner) {
+    public Post create(String content, User owner) throws TextLimitException {
+        if (content.length() > Post.textLimit) {
+            throw new TextLimitException("content", Post.textLimit);
+        }
+
         Post post = new Post(content, owner);
         owner.addPost(post);
 

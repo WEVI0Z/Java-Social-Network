@@ -4,6 +4,7 @@ import lombok.Getter;
 import wevioz.social_network.entity.Comment;
 import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
+import wevioz.social_network.exception.TextLimitException;
 
 import java.util.ArrayList;
 
@@ -26,7 +27,11 @@ public class CommentService implements EntityService<Comment> {
         return comments.stream().filter(comment -> comment.getId() == id).findFirst().get();
     }
 
-    public Comment create(String content, Post post, User owner) {
+    public Comment create(String content, Post post, User owner) throws TextLimitException {
+        if (content.length() > Comment.textLimit) {
+            throw new TextLimitException("content", Comment.textLimit);
+        }
+
         Comment comment = new Comment(post, owner, content);
         post.addComment(comment);
 

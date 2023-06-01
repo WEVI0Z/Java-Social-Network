@@ -19,6 +19,7 @@ public class Post {
     private final User owner;
     private ArrayList<Comment> comments = new ArrayList<>();
     private LocalDate creationDate = LocalDate.now();
+    public static int textLimit = 200;
 
     public void addComment(Comment comment) {
         comments.add(comment);
