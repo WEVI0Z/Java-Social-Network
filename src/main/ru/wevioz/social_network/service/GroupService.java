@@ -6,25 +6,27 @@ import wevioz.social_network.entity.User;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 public class GroupService implements EntityService<Group> {
-    private final ArrayList<Group> groups = new ArrayList<>();
+    private static AtomicInteger nextId = new AtomicInteger(0);
+    private ArrayList<Group> groups = new ArrayList<>();
 
     public Group createGroup() {
-        return new Group();
+        return new Group(nextId.getAndIncrement());
     }
 
     @Override
-    public Group findById(int id) {
+    public Optional<Group> findById(int id) {
         return groups.stream().
                 filter(group -> group.getId() == id).
-                findFirst().
-                get();
+                findFirst();
     }
 
     public List<User> getGroupUsersById(int id) {
-        Group group = findById(id);
+        Group group = findById(id).get();
 
         return group.getParticipants();
     }
@@ -37,5 +39,13 @@ public class GroupService implements EntityService<Group> {
     @Override
     public void remove(Group group) {
         groups.remove(group);
+    }
+
+    public static void addUser(User user, Group group) {
+        group.getParticipants().add(user);
+    }
+
+    public static void removeUser(User user, Group group) {
+        group.getParticipants().remove(user);
     }
 }

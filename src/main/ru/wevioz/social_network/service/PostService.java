@@ -9,31 +9,36 @@ import wevioz.social_network.exception.TextLimitException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+
 
 @Getter
 public class PostService implements EntityService<Post>{
-    private final ArrayList<Post> posts = new ArrayList<>();
+    public final int TEXT_LIMIT = 200;
+    private static AtomicInteger nextId = new AtomicInteger(0);
+    private ArrayList<Post> posts = new ArrayList<>();
 
     public Post create(String content, User owner) throws TextLimitException {
-        if (content.length() > Post.textLimit) {
-            throw new TextLimitException("content", Post.textLimit);
+        if (content.length() > TEXT_LIMIT) {
+            throw new TextLimitException("content", TEXT_LIMIT);
         }
 
-        Post post = new Post(content, owner);
-        owner.addPost(post);
+        Post post = new Post(nextId.getAndIncrement(), content, owner);
+        UserService.addPost(post, owner);
 
         return  post;
     }
 
     public List<Comment> getPostCommentsById(int id) {
-        Post post = findById(id);
+        Post post = findById(id).get();
 
         return post.getComments();
     }
 
     @Override
-    public Post findById(int id) {
-        return posts.stream().filter(post -> post.getId() == id).findFirst().get();
+    public Optional<Post> findById(int id) {
+        return posts.stream().filter(post -> post.getId() == id).findFirst();
     }
 
     @Override
@@ -44,5 +49,9 @@ public class PostService implements EntityService<Post>{
     @Override
     public void remove(Post post) {
         posts.remove(post);
+    }
+
+    public static void addComment(Comment comment, Post post) {
+        post.getComments().add(comment);
     }
 }

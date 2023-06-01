@@ -7,27 +7,30 @@ import wevioz.social_network.exception.UniqueException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 public class UserService implements EntityService<User> {
-    private final ArrayList<User> users = new ArrayList<>();
+    private static AtomicInteger nextId = new AtomicInteger(0);
+    private ArrayList<User> users = new ArrayList<>();
 
     private User create(String email) throws UniqueException {
         if (users.stream().anyMatch(user -> user.getEmail().equals(email))) {
             throw new UniqueException("email");
         }
-        return new User(email);
+        return new User(nextId.getAndIncrement(), email);
     }
 
     public List<Post> getUserPostsById(int id) {
-        User user = findById(id);
+        User user = findById(id).get();
 
         return user.getPosts();
     }
 
     @Override
-    public User findById(int id) {
-        return users.stream().filter(user -> user.getId() == id).findFirst().get();
+    public Optional<User> findById(int id) {
+        return users.stream().filter(user -> user.getId() == id).findFirst();
     }
 
     @Override
@@ -38,5 +41,9 @@ public class UserService implements EntityService<User> {
     @Override
     public void remove(User user) {
         users.remove(user);
+    }
+
+    public static void addPost(Post post, User user) {
+        user.getPosts().add(post);
     }
 }

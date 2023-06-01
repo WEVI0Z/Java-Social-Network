@@ -1,21 +1,17 @@
 package wevioz.social_network.entity;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import java.time.LocalDate;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
-@Setter(AccessLevel.PRIVATE)
-@RequiredArgsConstructor
+@Setter
+@AllArgsConstructor
 public class Comment {
-    private static AtomicInteger nextId = new AtomicInteger(0);
-    private int id = nextId.getAndIncrement();
-    private final Post post;
-    private final User owner;
-    private final String content;
-    private LocalDate creationTime = LocalDate.now();
-    public static int textLimit = 100;
+    private final int id;
+    private Post post;
+    private User owner;
+    private String content;
+    private final LocalDate creationTime = LocalDate.now();
 }

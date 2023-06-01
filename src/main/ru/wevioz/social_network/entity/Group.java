@@ -1,24 +1,14 @@
 package wevioz.social_network.entity;
 
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Setter(AccessLevel.PRIVATE)
+@Setter
 @Getter
+@RequiredArgsConstructor
 public class Group {
-    private static AtomicInteger nextId = new AtomicInteger(0);
-    private int id = nextId.getAndIncrement();
+    private final int id;
     private ArrayList<User> participants = new ArrayList<>();
-
-    public void addUser(User user) {
-        participants.add(user);
-    }
-
-    public void removeUser(User user) {
-        participants.remove(user);
-    }
 }

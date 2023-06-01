@@ -9,15 +9,10 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
-@Setter(AccessLevel.PRIVATE)
+@Setter
 @RequiredArgsConstructor
 public class User {
-    private static AtomicInteger nextId = new AtomicInteger(0);
-    private int id = nextId.getAndIncrement();
+    private final int id;
     private final String email;
     private ArrayList<Post> posts = new ArrayList<>();
-
-    public void addPost(Post post) {
-        posts.add(post);
-    }
 }
