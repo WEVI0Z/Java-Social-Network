@@ -1,6 +1,7 @@
 package wevioz.social_network.service;
 
 import lombok.Getter;
+import org.springframework.stereotype.Service;
 import wevioz.social_network.entity.Group;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
@@ -11,6 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
+@Service
 public class GroupService implements EntityService<Group> {
     private static AtomicInteger nextId = new AtomicInteger(0);
     private ArrayList<Group> groups = new ArrayList<>();
@@ -20,20 +22,18 @@ public class GroupService implements EntityService<Group> {
     }
 
     @Override
-    public Optional<Group> findById(int id) {
-        return groups.stream().
-                filter(group -> group.getId() == id).
-                findFirst();
+    public Group findById(int id) throws NotFoundException {
+        Group group = groups.stream().filter(item -> item.getId() == id).findFirst().orElse(null);
+
+        if(group != null) {
+            return group;
+        } else {
+            throw new NotFoundException("user");
+        }
     }
 
     public List<User> getGroupUsersById(int id) throws NotFoundException {
-        Group group = findById(id).orElse(null);
-
-        if(group != null) {
-            return group.getParticipants();
-        } else {
-            throw new NotFoundException("group");
-        }
+        return findById(id).getParticipants();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package wevioz.social_network.service;
 
 import lombok.Getter;
+import org.springframework.stereotype.Service;
 import wevioz.social_network.entity.Comment;
 import wevioz.social_network.entity.Group;
 import wevioz.social_network.entity.Post;
@@ -15,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 
 @Getter
+@Service
 public class PostService implements EntityService<Post>{
     public final int TEXT_LIMIT = 200;
     private static AtomicInteger nextId = new AtomicInteger(0);
@@ -32,18 +34,18 @@ public class PostService implements EntityService<Post>{
     }
 
     public List<Comment> getPostCommentsById(int id) throws NotFoundException {
-        Post post = findById(id).orElse(null);
-
-        if(post != null) {
-            return post.getComments();
-        } else {
-            throw new NotFoundException("post");
-        }
+        return findById(id).getComments();
     }
 
     @Override
-    public Optional<Post> findById(int id) {
-        return posts.stream().filter(post -> post.getId() == id).findFirst();
+    public Post findById(int id) throws NotFoundException {
+        Post post = posts.stream().filter(item -> item.getId() == id).findFirst().orElse(null);
+
+        if(post != null) {
+            return post;
+        } else {
+            throw new NotFoundException("post");
+        }
     }
 
     @Override

@@ -1,6 +1,8 @@
 package wevioz.social_network.service;
 
 import lombok.Getter;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
 import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
@@ -12,11 +14,19 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
+@Service
 public class UserService implements EntityService<User> {
     private static AtomicInteger nextId = new AtomicInteger(0);
     private ArrayList<User> users = new ArrayList<>();
 
-    private User create(String email) throws UniqueException {
+    public UserService() {
+        users.add(new User(nextId.getAndIncrement(), "Wevioz"));
+        users.add(new User(nextId.getAndIncrement(), "Alex"));
+        users.add(new User(nextId.getAndIncrement(), "Pioter"));
+        users.add(new User(nextId.getAndIncrement(), "Folk"));
+    }
+
+    public User create(String email) throws UniqueException {
         if (users.stream().anyMatch(user -> user.getEmail().equals(email))) {
             throw new UniqueException("email");
         }
@@ -24,18 +34,18 @@ public class UserService implements EntityService<User> {
     }
 
     public List<Post> getUserPostsById(int id) throws NotFoundException {
-        User user = findById(id).orElse(null);
-
-        if(user != null) {
-            return user.getPosts();
-        } else {
-            throw new NotFoundException("user");
-        }
+        return findById(id).getPosts();
     }
 
     @Override
-    public Optional<User> findById(int id) {
-        return users.stream().filter(user -> user.getId() == id).findFirst();
+    public User findById(int id) throws NotFoundException {
+        User user = users.stream().filter(item -> item.getId() == id).findFirst().orElse(null);
+
+        if(user != null) {
+            return user;
+        } else {
+            throw new NotFoundException("user");
+        }
     }
 
     @Override
