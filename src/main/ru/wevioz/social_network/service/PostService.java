@@ -28,7 +28,7 @@ public class PostService implements EntityService<Post>{
     private PostService(UserService userService) {
         this.userService = userService;
 
-        create(new PostCreateDto(1, "Some Text 2"));
+        create(new PostCreateDto(2, "Some Text 2"));
         create(new PostCreateDto(1, "Some Text 3"));
         create(new PostCreateDto(1, "Some Text 4"));
     }
@@ -50,6 +50,8 @@ public class PostService implements EntityService<Post>{
 
         Post post = createInstance(postCreateDto.getContent(), user);
 
+        user.getPosts().add(post);
+
         add(post);
 
         return post;
@@ -57,6 +59,7 @@ public class PostService implements EntityService<Post>{
 
     public Post delete(int id) {
         Post post = findById(id);
+        post.getOwner().getPosts().remove(post);
 
         remove(post);
 
@@ -82,9 +85,5 @@ public class PostService implements EntityService<Post>{
     @Override
     public void remove(Post post) {
         posts.remove(post);
-    }
-
-    public static void addComment(Comment comment, Post post) {
-        post.getComments().add(comment);
     }
 }
