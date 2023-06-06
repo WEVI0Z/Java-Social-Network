@@ -2,6 +2,7 @@ package wevioz.social_network.service;
 
 import lombok.Getter;
 import org.springframework.stereotype.Service;
+import wevioz.social_network.dto.PostCreateDto;
 import wevioz.social_network.entity.Comment;
 import wevioz.social_network.entity.Group;
 import wevioz.social_network.entity.Post;
@@ -22,7 +23,13 @@ public class PostService implements EntityService<Post>{
     private static AtomicInteger nextId = new AtomicInteger(0);
     private ArrayList<Post> posts = new ArrayList<>();
 
-    public Post create(String content, User owner) throws TextLimitException {
+    private final UserService userService;
+
+    private PostService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public Post createInstance(String content, User owner) throws TextLimitException {
         if (content.length() > TEXT_LIMIT) {
             throw new TextLimitException("content", TEXT_LIMIT);
         }
@@ -35,6 +42,24 @@ public class PostService implements EntityService<Post>{
 
     public List<Comment> getPostCommentsById(int id) throws NotFoundException {
         return findById(id).getComments();
+    }
+
+    public Post create(PostCreateDto postCreateDto) {
+        User user = userService.findById(postCreateDto.getUserId());
+
+        Post post = createInstance(postCreateDto.getContent(), user);
+
+        UserService.addPost(post, user);
+
+        return post;
+    }
+
+    public Post delete(int id) {
+        Post post = findById(id);
+
+        remove(post);
+
+        return post;
     }
 
     @Override

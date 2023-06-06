@@ -3,6 +3,7 @@ package wevioz.social_network.service;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
+import wevioz.social_network.dto.UserPostDto;
 import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
@@ -26,11 +27,19 @@ public class UserService implements EntityService<User> {
         users.add(new User(nextId.getAndIncrement(), "Folk"));
     }
 
-    public User create(String email) throws UniqueException {
+    public User createInstance(String email) throws UniqueException {
         if (users.stream().anyMatch(user -> user.getEmail().equals(email))) {
             throw new UniqueException("email");
         }
         return new User(nextId.getAndIncrement(), email);
+    }
+
+    public User create(UserPostDto userPostDto) {
+        User user = createInstance(userPostDto.getEmail());
+
+        add(user);
+
+        return user;
     }
 
     public List<Post> getUserPostsById(int id) throws NotFoundException {
@@ -60,5 +69,13 @@ public class UserService implements EntityService<User> {
 
     public static void addPost(Post post, User user) {
         user.getPosts().add(post);
+    }
+
+    public User removeById(int id) {
+        User user = findById(id);
+
+        remove(user);
+
+        return user;
     }
 }
