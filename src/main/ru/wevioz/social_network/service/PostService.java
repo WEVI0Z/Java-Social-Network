@@ -27,6 +27,10 @@ public class PostService implements EntityService<Post>{
 
     private PostService(UserService userService) {
         this.userService = userService;
+
+        create(new PostCreateDto(1, "Some Text 2"));
+        create(new PostCreateDto(1, "Some Text 3"));
+        create(new PostCreateDto(1, "Some Text 4"));
     }
 
     public Post createInstance(String content, User owner) throws TextLimitException {
@@ -34,10 +38,7 @@ public class PostService implements EntityService<Post>{
             throw new TextLimitException("content", TEXT_LIMIT);
         }
 
-        Post post = new Post(nextId.getAndIncrement(), content, owner);
-        UserService.addPost(post, owner);
-
-        return  post;
+        return new Post(nextId.getAndIncrement(), content, owner);
     }
 
     public List<Comment> getPostCommentsById(int id) throws NotFoundException {
@@ -49,7 +50,7 @@ public class PostService implements EntityService<Post>{
 
         Post post = createInstance(postCreateDto.getContent(), user);
 
-        UserService.addPost(post, user);
+        add(post);
 
         return post;
     }

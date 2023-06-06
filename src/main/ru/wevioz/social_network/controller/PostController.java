@@ -10,7 +10,8 @@ import wevioz.social_network.service.PostService;
 
 import java.util.ArrayList;
 
-@Controller
+@RestController
+@RequestMapping("/posts")
 public class PostController {
     private final PostService postService;
 

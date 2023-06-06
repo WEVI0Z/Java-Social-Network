@@ -67,10 +67,6 @@ public class UserService implements EntityService<User> {
         users.remove(user);
     }
 
-    public static void addPost(Post post, User user) {
-        user.getPosts().add(post);
-    }
-
     public User removeById(int id) {
         User user = findById(id);
 

@@ -17,7 +17,13 @@ public class GroupService implements EntityService<Group> {
     private static AtomicInteger nextId = new AtomicInteger(0);
     private ArrayList<Group> groups = new ArrayList<>();
 
-    public Group createGroup() {
+    private final UserService userService;
+
+    private GroupService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public Group createInstance() {
         return new Group(nextId.getAndIncrement());
     }
 
@@ -32,6 +38,32 @@ public class GroupService implements EntityService<Group> {
         }
     }
 
+    public Group create() {
+        Group group = createInstance();
+
+        add(group);
+
+        return group;
+    }
+
+    public Group addParticipantById(int groupId, int participantId) {
+        Group group = findById(groupId);
+        User user = userService.findById(participantId);
+
+        group.getParticipants().add(user);
+
+        return group;
+    }
+
+    public Group removeParticipantById(int groupId, int participantId) {
+        Group group = findById(groupId);
+        User user = userService.findById(participantId);
+
+        group.getParticipants().remove(user);
+
+        return group;
+    }
+
     public List<User> getGroupUsersById(int id) throws NotFoundException {
         return findById(id).getParticipants();
     }
@@ -44,13 +76,5 @@ public class GroupService implements EntityService<Group> {
     @Override
     public void remove(Group group) {
         groups.remove(group);
-    }
-
-    public static void addUser(User user, Group group) {
-        group.getParticipants().add(user);
-    }
-
-    public static void removeUser(User user, Group group) {
-        group.getParticipants().remove(user);
     }
 }

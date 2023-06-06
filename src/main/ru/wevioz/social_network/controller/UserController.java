@@ -14,7 +14,7 @@ import wevioz.social_network.service.UserService;
 import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+@RestController
 @RequestMapping(value = "/users")
 public class UserController {
     private final UserService userService;
