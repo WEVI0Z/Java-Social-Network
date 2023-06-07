@@ -1,9 +1,11 @@
 package wevioz.social_network.service;
 
+import wevioz.social_network.exception.NotFoundException;
+
 import java.util.Optional;
 
 public interface EntityService<T> {
-    Optional<T> findById(int id);
+    T findById(int id) throws NotFoundException;
     void add(T item);
     void remove(T item);
 }

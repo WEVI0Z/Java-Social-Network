@@ -1,5 +1,6 @@
 package wevioz.social_network.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import java.time.LocalDate;

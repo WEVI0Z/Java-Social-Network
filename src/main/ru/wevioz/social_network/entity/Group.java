@@ -10,5 +10,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public class Group {
     private final int id;
+    private final String name;
     private ArrayList<User> participants = new ArrayList<>();
 }

@@ -1,6 +1,10 @@
 package wevioz.social_network.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpStatusCodeException;
+import wevioz.social_network.dto.UserPostDto;
 import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
@@ -12,30 +16,47 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
+@Service
 public class UserService implements EntityService<User> {
     private static AtomicInteger nextId = new AtomicInteger(0);
     private ArrayList<User> users = new ArrayList<>();
 
-    private User create(String email) throws UniqueException {
+    @PostConstruct
+    private void postConstruct() {
+        users.add(new User(nextId.getAndIncrement(), "Wevioz"));
+        users.add(new User(nextId.getAndIncrement(), "Alex"));
+        users.add(new User(nextId.getAndIncrement(), "Pioter"));
+        users.add(new User(nextId.getAndIncrement(), "Folk"));
+    }
+
+    public User createInstance(String email) throws UniqueException {
         if (users.stream().anyMatch(user -> user.getEmail().equals(email))) {
             throw new UniqueException("email");
         }
         return new User(nextId.getAndIncrement(), email);
     }
 
-    public List<Post> getUserPostsById(int id) throws NotFoundException {
-        User user = findById(id).orElse(null);
+    public User create(UserPostDto userPostDto) {
+        User user = createInstance(userPostDto.getEmail());
 
-        if(user != null) {
-            return user.getPosts();
-        } else {
-            throw new NotFoundException("user");
-        }
+        add(user);
+
+        return user;
+    }
+
+    public List<Post> getUserPostsById(int id) throws NotFoundException {
+        return findById(id).getPosts();
     }
 
     @Override
-    public Optional<User> findById(int id) {
-        return users.stream().filter(user -> user.getId() == id).findFirst();
+    public User findById(int id) throws NotFoundException {
+        Optional<User> user = users.stream().filter(item -> item.getId() == id).findFirst();
+
+        if(user.isPresent()) {
+            return user.get();
+        } else {
+            throw new NotFoundException("user");
+        }
     }
 
     @Override
@@ -48,7 +69,11 @@ public class UserService implements EntityService<User> {
         users.remove(user);
     }
 
-    public static void addPost(Post post, User user) {
-        user.getPosts().add(post);
+    public User removeById(int id) {
+        User user = findById(id);
+
+        remove(user);
+
+        return user;
     }
 }
