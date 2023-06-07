@@ -1,7 +1,9 @@
 package wevioz.social_network.service;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import wevioz.social_network.dto.GroupPostDto;
 import wevioz.social_network.entity.Group;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
@@ -11,35 +13,35 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Getter
 @Service
+@RequiredArgsConstructor
 public class GroupService implements EntityService<Group> {
     private static AtomicInteger nextId = new AtomicInteger(0);
     private ArrayList<Group> groups = new ArrayList<>();
 
     private final UserService userService;
 
-    private GroupService(UserService userService) {
-        this.userService = userService;
+    public List<Group> getGroups() {
+        return groups;
     }
 
-    public Group createInstance() {
-        return new Group(nextId.getAndIncrement());
+    public Group createInstance(String name) {
+        return new Group(nextId.getAndIncrement(), name);
     }
 
     @Override
     public Group findById(int id) throws NotFoundException {
-        Group group = groups.stream().filter(item -> item.getId() == id).findFirst().orElse(null);
+        Optional<Group> group = groups.stream().filter(item -> item.getId() == id).findFirst();
 
-        if(group != null) {
-            return group;
+        if(group.isPresent()) {
+            return group.get();
         } else {
             throw new NotFoundException("user");
         }
     }
 
-    public Group create() {
-        Group group = createInstance();
+    public Group create(GroupPostDto groupPostDto) {
+        Group group = createInstance(groupPostDto.getName());
 
         add(group);
 

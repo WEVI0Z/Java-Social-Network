@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/comments")
 public class CommentController {
-    public final CommentService commentService;
+    private final CommentService commentService;
 
     private CommentController(CommentService commentService) {
         this.commentService = commentService;
@@ -31,16 +31,12 @@ public class CommentController {
     }
 
     @PostMapping
-    public Comment post(
-            @RequestBody CommentCreateDto commentCreateDto
-    ) {
+    public Comment post(@RequestBody CommentCreateDto commentCreateDto) {
         return commentService.create(commentCreateDto);
     }
 
     @DeleteMapping("/{id}")
-    public Comment delete(
-            @PathVariable int id
-    ) {
+    public Comment delete(@PathVariable int id) {
         return commentService.delete(id);
     }
 }

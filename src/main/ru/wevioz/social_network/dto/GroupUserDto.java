@@ -1,5 +1,6 @@
 package wevioz.social_network.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
@@ -11,11 +12,9 @@ import lombok.Setter;
 @Setter
 @RequiredArgsConstructor
 public class GroupUserDto {
-    @NotEmpty(message = "Field groupId is empty")
-    @NotBlank(message = "Field groupId is empty")
+    @Min(0)
     private int groupId;
 
-    @NotEmpty(message = "Field userId is empty")
-    @NotBlank(message = "Field userId is empty")
+    @Min(0)
     private int userId;
 }

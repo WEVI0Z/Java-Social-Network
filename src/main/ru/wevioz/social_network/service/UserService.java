@@ -1,5 +1,6 @@
 package wevioz.social_network.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -20,7 +21,8 @@ public class UserService implements EntityService<User> {
     private static AtomicInteger nextId = new AtomicInteger(0);
     private ArrayList<User> users = new ArrayList<>();
 
-    public UserService() {
+    @PostConstruct
+    private void postConstruct() {
         users.add(new User(nextId.getAndIncrement(), "Wevioz"));
         users.add(new User(nextId.getAndIncrement(), "Alex"));
         users.add(new User(nextId.getAndIncrement(), "Pioter"));
@@ -48,10 +50,10 @@ public class UserService implements EntityService<User> {
 
     @Override
     public User findById(int id) throws NotFoundException {
-        User user = users.stream().filter(item -> item.getId() == id).findFirst().orElse(null);
+        Optional<User> user = users.stream().filter(item -> item.getId() == id).findFirst();
 
-        if(user != null) {
-            return user;
+        if(user.isPresent()) {
+            return user.get();
         } else {
             throw new NotFoundException("user");
         }

@@ -30,30 +30,22 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public @ResponseBody User getById(
-        @PathVariable int id
-    ) throws NotFoundException {
+    public User getById(@PathVariable int id) throws NotFoundException {
         return userService.findById(id);
     }
 
     @GetMapping("/{id}/posts")
-    public @ResponseBody List<Post> getUsersPostsById(
-            @PathVariable int id
-    ) throws NotFoundException {
+    public List<Post> getUsersPostsById(@PathVariable int id) throws NotFoundException {
         return userService.getUserPostsById(id);
     }
 
     @DeleteMapping("/{id}")
-    public @ResponseBody User deleteById(
-            @PathVariable int id
-    ) throws NotFoundException {
+    public User deleteById(@PathVariable int id) throws NotFoundException {
         return userService.removeById(id);
     }
 
     @PostMapping
-    public @ResponseBody User create(
-        @RequestBody @Valid UserPostDto userPostDto
-    ) {
+    public User create(@RequestBody @Valid UserPostDto userPostDto) {
         return userService.create(userPostDto);
     }
 }

@@ -1,6 +1,8 @@
 package wevioz.social_network.service;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import wevioz.social_network.dto.PostCreateDto;
 import wevioz.social_network.entity.Comment;
@@ -15,9 +17,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-
-@Getter
 @Service
+@RequiredArgsConstructor
 public class PostService implements EntityService<Post>{
     public final int TEXT_LIMIT = 200;
     private static AtomicInteger nextId = new AtomicInteger(0);
@@ -25,12 +26,15 @@ public class PostService implements EntityService<Post>{
 
     private final UserService userService;
 
-    private PostService(UserService userService) {
-        this.userService = userService;
-
+    @PostConstruct
+    private void postConstruct() {
         create(new PostCreateDto(2, "Some Text 2"));
         create(new PostCreateDto(1, "Some Text 3"));
         create(new PostCreateDto(1, "Some Text 4"));
+    }
+
+    public List<Post> getPosts() {
+        return posts;
     }
 
     public Post createInstance(String content, User owner) throws TextLimitException {
@@ -68,10 +72,10 @@ public class PostService implements EntityService<Post>{
 
     @Override
     public Post findById(int id) throws NotFoundException {
-        Post post = posts.stream().filter(item -> item.getId() == id).findFirst().orElse(null);
+        Optional<Post> post = posts.stream().filter(item -> item.getId() == id).findFirst();
 
-        if(post != null) {
-            return post;
+        if(post.isPresent()) {
+            return post.get();
         } else {
             throw new NotFoundException("post");
         }

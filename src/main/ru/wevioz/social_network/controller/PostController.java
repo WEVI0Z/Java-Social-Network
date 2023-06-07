@@ -9,6 +9,7 @@ import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.service.PostService;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
@@ -21,28 +22,22 @@ public class PostController {
     }
 
     @GetMapping
-    public ArrayList<Post> get() {
+    public List<Post> get() {
         return postService.getPosts();
     }
 
     @GetMapping("/{id}")
-    public Post getById(
-            @PathVariable int id
-    ) throws NotFoundException {
+    public Post getById(@PathVariable int id) throws NotFoundException {
         return postService.findById(id);
     }
 
     @PostMapping
-    public Post create(
-            @RequestBody PostCreateDto postCreateDto
-    ) {
+    public Post create(@RequestBody PostCreateDto postCreateDto) {
         return postService.create(postCreateDto);
     }
 
     @DeleteMapping("/{id}")
-    public Post delete(
-            @PathVariable int id
-    ) {
+    public Post delete(@PathVariable int id) {
         return postService.delete(id);
     }
 }

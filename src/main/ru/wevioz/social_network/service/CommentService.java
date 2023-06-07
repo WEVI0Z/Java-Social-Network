@@ -1,6 +1,7 @@
 package wevioz.social_network.service;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import wevioz.social_network.dto.CommentCreateDto;
 import wevioz.social_network.entity.Comment;
@@ -10,11 +11,12 @@ import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.exception.TextLimitException;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-@Getter
 @Service
+@RequiredArgsConstructor
 public class CommentService implements EntityService<Comment> {
     public final static int TEXT_LIMIT = 100;
     private static AtomicInteger nextId = new AtomicInteger(0);
@@ -23,12 +25,8 @@ public class CommentService implements EntityService<Comment> {
     private final PostService postService;
     private final UserService userService;
 
-    private CommentService(
-            PostService postService,
-            UserService userService
-    ) {
-        this.postService = postService;
-        this.userService = userService;
+    public List<Comment> getComments() {
+        return comments;
     }
 
     @Override
@@ -43,10 +41,10 @@ public class CommentService implements EntityService<Comment> {
 
     @Override
     public Comment findById(int id) throws NotFoundException {
-        Comment comment = comments.stream().filter(item -> item.getId() == id).findFirst().orElse(null);
+        Optional<Comment> comment = comments.stream().filter(item -> item.getId() == id).findFirst();
 
-        if(comment != null) {
-            return comment;
+        if(comment.isPresent()) {
+            return comment.get();
         } else {
             throw new NotFoundException("comment");
         }

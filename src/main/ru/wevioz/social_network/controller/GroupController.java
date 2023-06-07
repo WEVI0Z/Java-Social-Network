@@ -2,6 +2,7 @@ package wevioz.social_network.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import wevioz.social_network.dto.GroupPostDto;
 import wevioz.social_network.dto.GroupUserDto;
 import wevioz.social_network.entity.Group;
 import wevioz.social_network.entity.User;
@@ -38,8 +39,8 @@ public class GroupController {
     }
 
     @PostMapping
-    public Group create() {
-        return groupService.create();
+    public Group create(@RequestBody GroupPostDto groupPostDto) {
+        return groupService.create(groupPostDto);
     }
 
     @PostMapping("/add")
