@@ -33,12 +33,10 @@ public class Comment {
     private final LocalDate creationTime = LocalDate.now();
 
     public Comment(
-            int id,
             String content,
             User owner,
             Post post
     ) {
-        this.id = id;
         this.content = content;
         this.owner = owner;
         this.post = post;

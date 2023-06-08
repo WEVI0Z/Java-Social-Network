@@ -7,6 +7,7 @@ import wevioz.social_network.dto.GroupPostDto;
 import wevioz.social_network.entity.Group;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
+import wevioz.social_network.repository.GroupRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,28 +17,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 @RequiredArgsConstructor
 public class GroupService implements EntityService<Group> {
-    private static AtomicInteger nextId = new AtomicInteger(0);
-    private ArrayList<Group> groups = new ArrayList<>();
-
     private final UserService userService;
+    private final GroupRepository groupRepository;
 
     public List<Group> getGroups() {
+        List<Group> groups = new ArrayList<>();
+
+        groupRepository.findAll().forEach(groups::add);
+
         return groups;
     }
 
     public Group createInstance(String name) {
-        return new Group(nextId.getAndIncrement(), name);
+        return new Group(name);
     }
 
     @Override
     public Group findById(int id) throws NotFoundException {
-        Optional<Group> group = groups.stream().filter(item -> item.getId() == id).findFirst();
+        Optional<Group> group = groupRepository.findById((long) id);
 
-        if(group.isPresent()) {
-            return group.get();
-        } else {
+        if(group.isEmpty()) {
             throw new NotFoundException("user");
         }
+
+        return group.get();
     }
 
     public Group create(GroupPostDto groupPostDto) {
@@ -54,6 +57,8 @@ public class GroupService implements EntityService<Group> {
 
         group.getParticipants().add(user);
 
+        groupRepository.save(group);
+
         return group;
     }
 
@@ -62,6 +67,8 @@ public class GroupService implements EntityService<Group> {
         User user = userService.findById(participantId);
 
         group.getParticipants().remove(user);
+
+        groupRepository.save(group);
 
         return group;
     }
@@ -72,11 +79,19 @@ public class GroupService implements EntityService<Group> {
 
     @Override
     public void add(Group group) {
-        groups.add(group);
+        groupRepository.save(group);
     }
 
     @Override
     public void remove(Group group) {
-        groups.remove(group);
+        groupRepository.delete(group);
+    }
+
+    public Group delete(int id) {
+        Group group = findById(id);
+
+        groupRepository.delete(group);
+
+        return group;
     }
 }

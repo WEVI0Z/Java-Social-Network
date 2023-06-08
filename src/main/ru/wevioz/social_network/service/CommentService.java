@@ -9,6 +9,7 @@ import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.exception.TextLimitException;
+import wevioz.social_network.repository.CommentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,38 +25,43 @@ public class CommentService implements EntityService<Comment> {
 
     private final PostService postService;
     private final UserService userService;
+    private final CommentRepository commentRepository;
 
     public List<Comment> getComments() {
+        List<Comment> comments = new ArrayList<>();
+
+        commentRepository.findAll().forEach(comments::add);
+
         return comments;
     }
 
     @Override
     public void add(Comment comment) {
-        comments.add(comment);
+        commentRepository.save(comment);
     }
 
     @Override
     public void remove(Comment comment) {
-        comments.remove(comment);
+        commentRepository.delete(comment);
     }
 
     @Override
     public Comment findById(int id) throws NotFoundException {
-        Optional<Comment> comment = comments.stream().filter(item -> item.getId() == id).findFirst();
+        Optional<Comment> comment = commentRepository.findById((long) id);
 
-        if(comment.isPresent()) {
-            return comment.get();
-        } else {
+        if(comment.isEmpty()) {
             throw new NotFoundException("comment");
         }
+
+        return comment.get();
     }
 
-    public Comment createInstance(String content, Post post, User owner) throws TextLimitException {
+    public Comment createInstance(String content, Post post, User owner) {
         if (content.length() > TEXT_LIMIT) {
             throw new TextLimitException("content", TEXT_LIMIT);
         }
 
-        return new Comment(nextId.getAndIncrement(), content, owner, post);
+        return new Comment(content, owner, post);
     }
 
     public Comment create(CommentCreateDto commentCreateDto) {
@@ -64,8 +70,6 @@ public class CommentService implements EntityService<Comment> {
 
         Comment comment = createInstance(commentCreateDto.getContent(), post, user);
 
-        post.getComments().add(comment);
-
         add(comment);
 
         return comment;
@@ -73,9 +77,7 @@ public class CommentService implements EntityService<Comment> {
 
     public Comment delete(int id) {
         Comment comment = findById(id);
-        Post post = comment.getPost();
 
-        post.getComments().remove(comment);
         remove(comment);
 
         return comment;

@@ -4,6 +4,7 @@ import lombok.*;
 
 import jakarta.persistence.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
@@ -24,16 +25,14 @@ public class Group {
     @ManyToMany(cascade = { CascadeType.ALL })
     @JoinTable(
             name = "user_group",
-            joinColumns = { @JoinColumn(name = "user_id") },
-            inverseJoinColumns = { @JoinColumn(name = "group_id") }
+            joinColumns = { @JoinColumn(name = "group_id") },
+            inverseJoinColumns = { @JoinColumn(name = "user_id") }
     )
-    private ArrayList<User> participants = new ArrayList<>();
+    private List<User> participants;
 
     public Group(
-            int id,
             String name
     ) {
-        this.id = id;
         this.name = name;
     }
 }

@@ -27,6 +27,10 @@ public class User {
     @OneToMany(mappedBy = "owner")
     private List<Post> posts;
 
+    @OneToMany(mappedBy = "owner")
+    @JsonIgnore
+    private List<Comment> comments;
+
     @JsonIgnore
     @ManyToMany(mappedBy = "participants")
     private List<Group> groups;

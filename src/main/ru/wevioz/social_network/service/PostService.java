@@ -47,7 +47,7 @@ public class PostService implements EntityService<Post>{
 
         Post post = createInstance(postCreateDto.getContent(), user);
 
-        user.getPosts().add(post);
+//        user.getPosts().add(post);
 
         add(post);
 
@@ -56,7 +56,7 @@ public class PostService implements EntityService<Post>{
 
     public Post delete(int id) {
         Post post = findById(id);
-        post.getOwner().getPosts().remove(post);
+//        post.getOwner().getPosts().remove(post);
 
         remove(post);
 

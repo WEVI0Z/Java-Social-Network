@@ -38,12 +38,17 @@ public class GroupController {
         return groupService.getGroupUsersById(id);
     }
 
+    @DeleteMapping("/{id}")
+    public Group delete(@PathVariable int id) {
+        return groupService.delete(id);
+    }
+
     @PostMapping
     public Group create(@RequestBody GroupPostDto groupPostDto) {
         return groupService.create(groupPostDto);
     }
 
-    @PostMapping("/add")
+    @PutMapping("/add")
     public Group addParticipant(
         @RequestBody GroupUserDto groupUserDto
     ) {
@@ -53,7 +58,7 @@ public class GroupController {
         );
     }
 
-    @PostMapping("/remove")
+    @PutMapping("/remove")
     public Group removeParticipant(
             @RequestBody GroupUserDto groupUserDto
     ) {

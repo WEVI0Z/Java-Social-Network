@@ -28,7 +28,7 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User owner;
 
-    @OneToMany
+    @OneToMany(mappedBy = "post")
     @JsonIgnore
     private List<Comment> comments;
 
