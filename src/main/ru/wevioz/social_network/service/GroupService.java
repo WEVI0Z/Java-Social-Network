@@ -90,6 +90,8 @@ public class GroupService implements EntityService<Group> {
     public Group delete(int id) {
         Group group = findById(id);
 
+        group.setParticipants(new ArrayList<>());
+
         groupRepository.delete(group);
 
         return group;

@@ -23,8 +23,8 @@ create table user_group (
     user_id int not null,
     group_id int not null,
     primary key(user_id, group_id),
-    CONSTRAINT fk_user FOREIGN KEY (user_id) references users(id) on delete cascade,
-    CONSTRAINT fk_group FOREIGN KEY (group_id) references groups(id) on delete cascade
+    CONSTRAINT fk_user FOREIGN KEY (user_id) references users(id),
+    CONSTRAINT fk_group FOREIGN KEY (group_id) references groups(id)
 );
 
 create table comments (
