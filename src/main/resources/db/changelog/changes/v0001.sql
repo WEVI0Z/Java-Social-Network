@@ -1,11 +1,11 @@
 create table users (
-    id bigint not null AUTOINCREMENT,
+    id bigserial not null,
     email varchar(255) not null,
     primary key(id)
 );
 
 create table posts (
-   id bigint not null,
+   id bigserial not null,
    content text not null,
    user_id int not null,
    primary key(id),
@@ -19,10 +19,9 @@ create table groups (
 );
 
 create table user_group (
-    id bigserial not null,
     user_id int not null,
     group_id int not null,
-    primary key(id),
+    primary key(user_id, group_id),
     CONSTRAINT fk_user FOREIGN KEY (user_id) references users(id),
     CONSTRAINT fk_group FOREIGN KEY (group_id) references groups(id)
 );

@@ -13,8 +13,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Table(name = "comments")
 public class Comment {
     @Id
-    @GeneratedValue
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "comment_seq_generator")
+    @SequenceGenerator(name = "comment_seq_generator", sequenceName = "groups_id_seq", allocationSize = 1)
+    @Column(nullable = false, unique = true)
     private int id;
 
     @ManyToOne

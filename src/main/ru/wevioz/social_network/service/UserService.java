@@ -20,11 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Service
-//@RequiredArgsConstructor
 public class UserService implements EntityService<User> {
-    private static AtomicInteger nextId = new AtomicInteger(0);
-    private ArrayList<User> users = new ArrayList<>();
-
     private final UserRepository userRepository;
 
     @Autowired
@@ -39,10 +35,13 @@ public class UserService implements EntityService<User> {
         return users;
     }
 
-    public User createInstance(String email) throws UniqueException {
-        if (users.stream().anyMatch(user -> user.getEmail().equals(email))) {
+    public User createInstance(String email) {
+        Optional<User> sameUser = userRepository.findUserByEmail(email);
+
+        if (sameUser.isPresent()) {
             throw new UniqueException("email");
         }
+
         return new User(email);
     }
 
@@ -54,19 +53,15 @@ public class UserService implements EntityService<User> {
         return user;
     }
 
-    public List<Post> getUserPostsById(int id) throws NotFoundException {
-        return findById(id).getPosts();
-    }
-
     @Override
-    public User findById(int id) throws NotFoundException {
-        Optional<User> user = users.stream().filter(item -> item.getId() == id).findFirst();
+    public User findById(int id) {
+        Optional<User> user = userRepository.findById((long) id);
 
-        if(user.isPresent()) {
-            return user.get();
-        } else {
+        if(user.isEmpty()) {
             throw new NotFoundException("user");
         }
+
+        return user.get();
     }
 
     @Override
@@ -76,7 +71,7 @@ public class UserService implements EntityService<User> {
 
     @Override
     public void remove(User user) {
-        users.remove(user);
+        userRepository.delete(user);
     }
 
     public User removeById(int id) {
