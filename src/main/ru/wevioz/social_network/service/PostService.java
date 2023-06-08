@@ -11,6 +11,7 @@ import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.exception.TextLimitException;
+import wevioz.social_network.repository.PostRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,16 +22,15 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public class PostService implements EntityService<Post>{
     public final int TEXT_LIMIT = 200;
-    private static AtomicInteger nextId = new AtomicInteger(0);
-    private ArrayList<Post> posts = new ArrayList<>();
 
     private final UserService userService;
-
-    @PostConstruct
-    private void postConstruct() {
-    }
+    private final PostRepository postRepository;
 
     public List<Post> getPosts() {
+        List<Post> posts = new ArrayList<>();
+
+        postRepository.findAll().forEach(posts::add);
+
         return posts;
     }
 
@@ -39,11 +39,7 @@ public class PostService implements EntityService<Post>{
             throw new TextLimitException("content", TEXT_LIMIT);
         }
 
-        return new Post(nextId.getAndIncrement(), content, owner);
-    }
-
-    public List<Comment> getPostCommentsById(int id) throws NotFoundException {
-        return findById(id).getComments();
+        return new Post(content, owner);
     }
 
     public Post create(PostCreateDto postCreateDto) {
@@ -69,22 +65,22 @@ public class PostService implements EntityService<Post>{
 
     @Override
     public Post findById(int id) throws NotFoundException {
-        Optional<Post> post = posts.stream().filter(item -> item.getId() == id).findFirst();
+        Optional<Post> post = postRepository.findById((long) id);
 
-        if(post.isPresent()) {
-            return post.get();
-        } else {
+        if(post.isEmpty()) {
             throw new NotFoundException("post");
         }
+
+        return post.get();
     }
 
     @Override
     public void add(Post post) {
-        posts.add(post);
+        postRepository.save(post);
     }
 
     @Override
     public void remove(Post post) {
-        posts.remove(post);
+        postRepository.delete(post);
     }
 }

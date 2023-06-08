@@ -8,6 +8,7 @@ create table posts (
    id bigserial not null,
    content text not null,
    user_id int not null,
+   creation_date timestamp not null,
    primary key(id),
    CONSTRAINT fk_user FOREIGN KEY (user_id) references users(id)
 );
@@ -31,6 +32,7 @@ create table comments (
    post_id int not null,
    user_id int not null,
    content text not null,
+   creation_time timestamp not null,
    primary key(id),
    CONSTRAINT fk_user FOREIGN KEY (user_id) references users(id),
    CONSTRAINT fk_post FOREIGN KEY (post_id) references posts(id)

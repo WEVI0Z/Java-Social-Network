@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Entity
@@ -28,17 +29,16 @@ public class Post {
     private User owner;
 
     @OneToMany
-    private ArrayList<Comment> comments = new ArrayList<>();
+    @JsonIgnore
+    private List<Comment> comments;
 
     @Column(name = "creation_date")
     private final LocalDate creationDate = LocalDate.now();
 
     public Post(
-            int id,
             String content,
             User owner
     ) {
-        this.id = id;
         this.content = content;
         this.owner = owner;
     }

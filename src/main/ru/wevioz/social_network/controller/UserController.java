@@ -34,11 +34,6 @@ public class UserController {
         return userService.findById(id);
     }
 
-    @GetMapping("/{id}/posts")
-    public List<Post> getUsersPostsById(@PathVariable int id) throws NotFoundException {
-        return userService.getUserPostsById(id);
-    }
-
     @DeleteMapping("/{id}")
     public User deleteById(@PathVariable int id) throws NotFoundException {
         return userService.removeById(id);
