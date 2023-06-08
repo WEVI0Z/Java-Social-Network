@@ -28,9 +28,6 @@ public class PostService implements EntityService<Post>{
 
     @PostConstruct
     private void postConstruct() {
-        create(new PostCreateDto(2, "Some Text 2"));
-        create(new PostCreateDto(1, "Some Text 3"));
-        create(new PostCreateDto(1, "Some Text 4"));
     }
 
     public List<Post> getPosts() {

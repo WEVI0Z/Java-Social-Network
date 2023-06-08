@@ -2,6 +2,8 @@ package wevioz.social_network.service;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import wevioz.social_network.dto.UserPostDto;
@@ -9,6 +11,7 @@ import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.exception.UniqueException;
+import wevioz.social_network.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,23 +20,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Service
+//@RequiredArgsConstructor
 public class UserService implements EntityService<User> {
     private static AtomicInteger nextId = new AtomicInteger(0);
     private ArrayList<User> users = new ArrayList<>();
 
-    @PostConstruct
-    private void postConstruct() {
-        users.add(new User(nextId.getAndIncrement(), "Wevioz"));
-        users.add(new User(nextId.getAndIncrement(), "Alex"));
-        users.add(new User(nextId.getAndIncrement(), "Pioter"));
-        users.add(new User(nextId.getAndIncrement(), "Folk"));
+    private final UserRepository userRepository;
+
+    @Autowired
+    private UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public List<User> get() {
+        List<User> users = new ArrayList<>();
+        userRepository.findAll().forEach(users::add);
+
+        return users;
     }
 
     public User createInstance(String email) throws UniqueException {
         if (users.stream().anyMatch(user -> user.getEmail().equals(email))) {
             throw new UniqueException("email");
         }
-        return new User(nextId.getAndIncrement(), email);
+        return new User(email);
     }
 
     public User create(UserPostDto userPostDto) {
@@ -61,7 +71,7 @@ public class UserService implements EntityService<User> {
 
     @Override
     public void add(User user) {
-        users.add(user);
+        userRepository.save(user);
     }
 
     @Override

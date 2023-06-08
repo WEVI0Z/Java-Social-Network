@@ -1,0 +1,38 @@
+create table users (
+    id bigint not null AUTOINCREMENT,
+    email varchar(255) not null,
+    primary key(id)
+);
+
+create table posts (
+   id bigint not null,
+   content text not null,
+   user_id int not null,
+   primary key(id),
+   CONSTRAINT fk_user FOREIGN KEY (user_id) references users(id)
+);
+
+create table groups (
+   id bigserial not null,
+   name varchar not null,
+   primary key(id)
+);
+
+create table user_group (
+    id bigserial not null,
+    user_id int not null,
+    group_id int not null,
+    primary key(id),
+    CONSTRAINT fk_user FOREIGN KEY (user_id) references users(id),
+    CONSTRAINT fk_group FOREIGN KEY (group_id) references groups(id)
+);
+
+create table comments (
+   id bigserial not null,
+   post_id int not null,
+   user_id int not null,
+   content text not null,
+   primary key(id),
+   CONSTRAINT fk_user FOREIGN KEY (user_id) references users(id),
+   CONSTRAINT fk_post FOREIGN KEY (post_id) references posts(id)
+);

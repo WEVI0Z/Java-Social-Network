@@ -1,20 +1,37 @@
 package wevioz.social_network.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.Table;
+import lombok.*;
 
-import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
+import jakarta.persistence.*;
 
+import java.util.List;
+
+@Entity
+@NoArgsConstructor
 @Getter
 @Setter
-@RequiredArgsConstructor
+@Table(name = "users")
 public class User {
-    private final int id;
-    private final String email;
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq_generator")
+    @SequenceGenerator(name = "user_seq_generator", sequenceName = "users_id_seq", allocationSize = 1)
+    @Column(nullable = false, unique = true)
+    private int id;
+
+    @Column(name = "email")
+    private String email;
+
     @JsonIgnore
-    private ArrayList<Post> posts = new ArrayList<>();
+    @OneToMany(mappedBy = "owner")
+    private List<Post> posts;
+
+    @JsonIgnore
+    @ManyToMany(mappedBy = "participants")
+    private List<Group> groups;
+
+    public User(String email) {
+        this.email = email;
+    }
 }

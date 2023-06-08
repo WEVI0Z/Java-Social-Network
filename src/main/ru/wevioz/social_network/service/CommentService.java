@@ -55,7 +55,7 @@ public class CommentService implements EntityService<Comment> {
             throw new TextLimitException("content", TEXT_LIMIT);
         }
 
-        return new Comment(nextId.getAndIncrement(), post, owner, content);
+        return new Comment(nextId.getAndIncrement(), content, owner, post);
     }
 
     public Comment create(CommentCreateDto commentCreateDto) {

@@ -1,9 +1,7 @@
 package wevioz.social_network.controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import wevioz.social_network.dto.CommentCreateDto;
-import wevioz.social_network.dto.PostCreateDto;
 import wevioz.social_network.entity.Comment;
 import wevioz.social_network.service.CommentService;
 
