@@ -23,16 +23,16 @@ public class User {
     @Column(name = "email")
     private String email;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "owner")
+    @JsonIgnore
     private List<Post> posts;
 
     @OneToMany(mappedBy = "owner")
     @JsonIgnore
     private List<Comment> comments;
 
-    @JsonIgnore
     @ManyToMany(mappedBy = "participants")
+    @JsonIgnore
     private List<Group> groups;
 
     public User(String email) {

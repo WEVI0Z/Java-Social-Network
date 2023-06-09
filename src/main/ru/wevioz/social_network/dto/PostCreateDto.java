@@ -8,7 +8,6 @@ import org.springframework.format.annotation.NumberFormat;
 
 @Getter
 @Setter
-@AllArgsConstructor
 public class PostCreateDto {
     @Min(0)
     private int userId;

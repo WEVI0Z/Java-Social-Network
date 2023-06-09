@@ -2,8 +2,10 @@ package wevioz.social_network.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import wevioz.social_network.dto.GroupGetDto;
 import wevioz.social_network.dto.GroupPostDto;
 import wevioz.social_network.dto.GroupUserDto;
+import wevioz.social_network.dto.UserGetDto;
 import wevioz.social_network.entity.Group;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.service.GroupService;
@@ -20,12 +22,12 @@ public class GroupController {
     }
 
     @GetMapping
-    public List<Group> get() {
+    public List<GroupGetDto> get() {
         return groupService.getGroups();
     }
 
     @GetMapping("/{id}")
-    public Group findById(
+    public GroupGetDto findById(
             @PathVariable int id
     ) {
         return groupService.findById(id);
@@ -39,17 +41,17 @@ public class GroupController {
     }
 
     @DeleteMapping("/{id}")
-    public Group delete(@PathVariable int id) {
+    public GroupGetDto delete(@PathVariable int id) {
         return groupService.delete(id);
     }
 
     @PostMapping
-    public Group create(@RequestBody GroupPostDto groupPostDto) {
+    public GroupGetDto create(@RequestBody GroupPostDto groupPostDto) {
         return groupService.create(groupPostDto);
     }
 
     @PutMapping("/add")
-    public Group addParticipant(
+    public GroupGetDto addParticipant(
         @RequestBody GroupUserDto groupUserDto
     ) {
         return groupService.addParticipantById(
@@ -59,7 +61,7 @@ public class GroupController {
     }
 
     @PutMapping("/remove")
-    public Group removeParticipant(
+    public GroupGetDto removeParticipant(
             @RequestBody GroupUserDto groupUserDto
     ) {
         return groupService.removeParticipantById(

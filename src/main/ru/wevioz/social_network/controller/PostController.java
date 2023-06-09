@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import wevioz.social_network.dto.PostCreateDto;
+import wevioz.social_network.dto.PostGetDto;
 import wevioz.social_network.entity.Post;
 import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.service.PostService;
@@ -22,22 +23,22 @@ public class PostController {
     }
 
     @GetMapping
-    public List<Post> get() {
+    public List<PostGetDto> get() {
         return postService.getPosts();
     }
 
     @GetMapping("/{id}")
-    public Post getById(@PathVariable int id) throws NotFoundException {
+    public PostGetDto getById(@PathVariable int id) throws NotFoundException {
         return postService.findById(id);
     }
 
     @PostMapping
-    public Post create(@RequestBody PostCreateDto postCreateDto) {
+    public PostGetDto create(@RequestBody PostCreateDto postCreateDto) {
         return postService.create(postCreateDto);
     }
 
     @DeleteMapping("/{id}")
-    public Post delete(@PathVariable int id) {
+    public PostGetDto delete(@PathVariable int id) {
         return postService.delete(id);
     }
 }

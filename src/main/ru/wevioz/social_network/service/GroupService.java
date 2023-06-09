@@ -3,10 +3,14 @@ package wevioz.social_network.service;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import wevioz.social_network.dto.GroupGetDto;
 import wevioz.social_network.dto.GroupPostDto;
+import wevioz.social_network.dto.UserGetDto;
 import wevioz.social_network.entity.Group;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
+import wevioz.social_network.mapper.GroupMapper;
+import wevioz.social_network.mapper.UserMapper;
 import wevioz.social_network.repository.GroupRepository;
 
 import java.util.ArrayList;
@@ -19,11 +23,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GroupService implements EntityService<Group> {
     private final UserService userService;
     private final GroupRepository groupRepository;
+    private final UserMapper userMapper;
+    private final GroupMapper groupMapper;
 
-    public List<Group> getGroups() {
-        List<Group> groups = new ArrayList<>();
+    public List<GroupGetDto> getGroups() {
+        List<GroupGetDto> groups = new ArrayList<>();
 
-        groupRepository.findAll().forEach(groups::add);
+        groupRepository.findAll().forEach(group -> groups.add(groupMapper.toGetDto(group)));
 
         return groups;
     }
@@ -32,45 +38,46 @@ public class GroupService implements EntityService<Group> {
         return new Group(name);
     }
 
-    @Override
-    public Group findById(int id) throws NotFoundException {
+    public GroupGetDto findById(int id) throws NotFoundException {
         Optional<Group> group = groupRepository.findById((long) id);
 
         if(group.isEmpty()) {
             throw new NotFoundException("user");
         }
 
-        return group.get();
+        return groupMapper.toGetDto(group.get());
     }
 
-    public Group create(GroupPostDto groupPostDto) {
+    public GroupGetDto create(GroupPostDto groupPostDto) {
         Group group = createInstance(groupPostDto.getName());
 
         add(group);
 
-        return group;
+        return groupMapper.toGetDto(group);
     }
 
-    public Group addParticipantById(int groupId, int participantId) {
-        Group group = findById(groupId);
-        User user = userService.findById(participantId);
+    public GroupGetDto addParticipantById(int groupId, int participantId) {
+        GroupGetDto groupGetDto = findById(groupId);
+        Group group = groupMapper.toEntity(groupGetDto);
+        UserGetDto userGetDto = userService.findById(participantId);
 
-        group.getParticipants().add(user);
+        group.getParticipants().add(userMapper.toEntity(userGetDto));
 
         groupRepository.save(group);
 
-        return group;
+        return groupGetDto;
     }
 
-    public Group removeParticipantById(int groupId, int participantId) {
-        Group group = findById(groupId);
-        User user = userService.findById(participantId);
+    public GroupGetDto removeParticipantById(int groupId, int participantId) {
+        GroupGetDto groupGetDto = findById(groupId);
+        Group group = groupMapper.toEntity(groupGetDto);
+        UserGetDto userGetDto = userService.findById(participantId);
 
-        group.getParticipants().remove(user);
+        group.getParticipants().remove(userMapper.toEntity(userGetDto));
 
         groupRepository.save(group);
 
-        return group;
+        return groupGetDto;
     }
 
     public List<User> getGroupUsersById(int id) throws NotFoundException {
@@ -87,13 +94,14 @@ public class GroupService implements EntityService<Group> {
         groupRepository.delete(group);
     }
 
-    public Group delete(int id) {
-        Group group = findById(id);
+    public GroupGetDto delete(int id) {
+        GroupGetDto groupGetDto = findById(id);
+        Group group = groupMapper.toEntity(groupGetDto);
 
         group.setParticipants(new ArrayList<>());
 
         groupRepository.delete(group);
 
-        return group;
+        return groupGetDto;
     }
 }

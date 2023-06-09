@@ -33,7 +33,7 @@ public class Post {
     private List<Comment> comments;
 
     @Column(name = "creation_date")
-    private final LocalDate creationDate = LocalDate.now();
+    private LocalDate creationDate = LocalDate.now();
 
     public Post(
             String content,

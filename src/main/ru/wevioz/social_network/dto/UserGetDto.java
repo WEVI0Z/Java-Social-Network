@@ -1,8 +1,8 @@
 package wevioz.social_network.dto;
 
-import lombok.Getter;
+import lombok.*;
 
-@Getter
+@Data
 public class UserGetDto {
     private int id;
     private String email;

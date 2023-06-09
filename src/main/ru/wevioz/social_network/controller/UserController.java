@@ -2,16 +2,13 @@ package wevioz.social_network.controller;
 
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import wevioz.social_network.dto.UserGetDto;
 import wevioz.social_network.dto.UserPostDto;
-import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
-import wevioz.social_network.exception.UniqueException;
 import wevioz.social_network.service.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -25,22 +22,22 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> get() {
+    public List<UserGetDto> get() {
         return userService.get();
     }
 
     @GetMapping("/{id}")
-    public User getById(@PathVariable int id) throws NotFoundException {
+    public UserGetDto getById(@PathVariable int id) throws NotFoundException {
         return userService.findById(id);
     }
 
     @DeleteMapping("/{id}")
-    public User deleteById(@PathVariable int id) throws NotFoundException {
+    public UserGetDto deleteById(@PathVariable int id) throws NotFoundException {
         return userService.removeById(id);
     }
 
     @PostMapping
-    public User create(@RequestBody @Valid UserPostDto userPostDto) {
+    public UserGetDto create(@RequestBody @Valid UserPostDto userPostDto) {
         return userService.create(userPostDto);
     }
 }
