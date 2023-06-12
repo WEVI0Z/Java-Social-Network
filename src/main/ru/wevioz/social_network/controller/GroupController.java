@@ -24,9 +24,7 @@ public class GroupController {
     }
 
     @GetMapping("/{id}")
-    public GroupDto findById(
-            @PathVariable int id
-    ) {
+    public GroupDto findById(@PathVariable int id) {
         return groupService.findById(id);
     }
 
@@ -46,9 +44,7 @@ public class GroupController {
     }
 
     @PutMapping("/add")
-    public GroupDto addParticipant(
-        @RequestBody GroupUserDto groupUserDto
-    ) {
+    public GroupDto addParticipant(@RequestBody GroupUserDto groupUserDto) {
         return groupService.addParticipantById(
                 groupUserDto.getGroupId(),
                 groupUserDto.getUserId()
