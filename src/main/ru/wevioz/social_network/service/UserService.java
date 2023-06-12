@@ -1,25 +1,18 @@
 package wevioz.social_network.service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.Mapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
-import wevioz.social_network.dto.UserGetDto;
-import wevioz.social_network.dto.UserPostDto;
-import wevioz.social_network.entity.Post;
+import wevioz.social_network.dto.UserDto;
+import wevioz.social_network.dto.request.UserPostRequest;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.exception.UniqueException;
 import wevioz.social_network.mapper.UserMapper;
 import wevioz.social_network.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Service
@@ -28,12 +21,8 @@ public class UserService implements EntityService<User> {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
 
-    public List<UserGetDto> get() {
-        List<UserGetDto> users = new ArrayList<>();
-
-        userRepository.findAll().forEach(user -> userMapper.toGetDto(user));
-
-        return users;
+    public List<UserDto> get() {
+        return userMapper.toGetDtoList(userRepository.findAll());
     }
 
     public User createInstance(String email) {
@@ -46,15 +35,15 @@ public class UserService implements EntityService<User> {
         return new User(email);
     }
 
-    public UserGetDto create(UserPostDto userPostDto) {
-        User user = createInstance(userPostDto.getEmail());
+    public UserDto create(UserPostRequest userPostRequest) {
+        User user = createInstance(userPostRequest.getEmail());
 
         add(user);
 
         return userMapper.toGetDto(user);
     }
 
-    public UserGetDto findById(int id) {
+    public UserDto findById(int id) {
         Optional<User> user = userRepository.findById((long) id);
 
         if(user.isEmpty()) {
@@ -74,8 +63,8 @@ public class UserService implements EntityService<User> {
         userRepository.delete(user);
     }
 
-    public UserGetDto removeById(int id) {
-        UserGetDto user = findById(id);
+    public UserDto removeById(int id) {
+        UserDto user = findById(id);
 
         remove(userMapper.toEntity(user));
 

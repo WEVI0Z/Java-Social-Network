@@ -2,7 +2,7 @@ package wevioz.social_network.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import wevioz.social_network.dto.UserGetDto;
+import wevioz.social_network.dto.UserDto;
 import wevioz.social_network.entity.User;
 
 import java.util.List;
@@ -11,11 +11,12 @@ import java.util.List;
 public interface UserMapper {
     @Mapping(target = "id", source = "entity.id")
     @Mapping(target = "email", source = "entity.email")
-    UserGetDto toGetDto(User entity);
+    UserDto toGetDto(User entity);
 
     @Mapping(target = "id", source = "dto.id")
     @Mapping(target = "email", source = "dto.email")
-    User toEntity(UserGetDto dto);
+    User toEntity(UserDto dto);
 
-    List<UserGetDto> toGetDtoList(List<User> list);
+    List<UserDto> toGetDtoList(Iterable<User> iterable);
+    List<UserDto> toGetDtoList(List<User> list);
 }

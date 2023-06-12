@@ -1,15 +1,12 @@
 package wevioz.social_network.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import wevioz.social_network.dto.PostCreateDto;
-import wevioz.social_network.dto.PostGetDto;
-import wevioz.social_network.entity.Post;
+import wevioz.social_network.dto.PostDto;
+import wevioz.social_network.dto.request.PostCreateRequest;
 import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.service.PostService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,22 +20,22 @@ public class PostController {
     }
 
     @GetMapping
-    public List<PostGetDto> get() {
+    public List<PostDto> get() {
         return postService.getPosts();
     }
 
     @GetMapping("/{id}")
-    public PostGetDto getById(@PathVariable int id) throws NotFoundException {
+    public PostDto getById(@PathVariable int id) throws NotFoundException {
         return postService.findById(id);
     }
 
     @PostMapping
-    public PostGetDto create(@RequestBody PostCreateDto postCreateDto) {
-        return postService.create(postCreateDto);
+    public PostDto create(@RequestBody PostCreateRequest postCreateRequest) {
+        return postService.create(postCreateRequest);
     }
 
     @DeleteMapping("/{id}")
-    public PostGetDto delete(@PathVariable int id) {
+    public PostDto delete(@PathVariable int id) {
         return postService.delete(id);
     }
 }

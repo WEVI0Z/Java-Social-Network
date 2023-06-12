@@ -1,12 +1,11 @@
 package wevioz.social_network.service;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import wevioz.social_network.dto.CommentCreateDto;
-import wevioz.social_network.dto.CommentGetDto;
-import wevioz.social_network.dto.PostGetDto;
-import wevioz.social_network.dto.UserGetDto;
+import wevioz.social_network.dto.CommentDto;
+import wevioz.social_network.dto.PostDto;
+import wevioz.social_network.dto.UserDto;
+import wevioz.social_network.dto.request.CommentCreateRequest;
 import wevioz.social_network.entity.Comment;
 import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
@@ -17,10 +16,8 @@ import wevioz.social_network.mapper.PostMapper;
 import wevioz.social_network.mapper.UserMapper;
 import wevioz.social_network.repository.CommentRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +31,7 @@ public class CommentService implements EntityService<Comment> {
     private final PostMapper postMapper;
     private final CommentMapper commentMapper;
 
-    public List<CommentGetDto> getComments() {
+    public List<CommentDto> getComments() {
         return commentMapper.toGetDtoList(commentRepository.findAll());
     }
 
@@ -48,7 +45,7 @@ public class CommentService implements EntityService<Comment> {
         commentRepository.delete(comment);
     }
 
-    public CommentGetDto findById(int id) throws NotFoundException {
+    public CommentDto findById(int id) throws NotFoundException {
         Optional<Comment> comment = commentRepository.findById((long) id);
 
         if(comment.isEmpty()) {
@@ -66,14 +63,14 @@ public class CommentService implements EntityService<Comment> {
         return new Comment(content, owner, post);
     }
 
-    public CommentGetDto create(CommentCreateDto commentCreateDto) {
-        PostGetDto postGetDto = postService.findById(commentCreateDto.getPostId());
-        UserGetDto userGetDto = userService.findById(commentCreateDto.getUserId());
+    public CommentDto create(CommentCreateRequest commentCreateRequest) {
+        PostDto postDto = postService.findById(commentCreateRequest.getPostId());
+        UserDto userDto = userService.findById(commentCreateRequest.getUserId());
 
         Comment comment = createInstance(
-                commentCreateDto.getContent(),
-                postMapper.toEntity(postGetDto),
-                userMapper.toEntity(userGetDto)
+                commentCreateRequest.getContent(),
+                postMapper.toEntity(postDto),
+                userMapper.toEntity(userDto)
         );
 
         add(comment);
@@ -81,11 +78,11 @@ public class CommentService implements EntityService<Comment> {
         return commentMapper.toGetDto(comment);
     }
 
-    public CommentGetDto delete(int id) {
-        CommentGetDto commentGetDto = findById(id);
+    public CommentDto delete(int id) {
+        CommentDto commentDto = findById(id);
 
-        remove(commentMapper.toEntity(commentGetDto));
+        remove(commentMapper.toEntity(commentDto));
 
-        return commentGetDto;
+        return commentDto;
     }
 }

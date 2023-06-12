@@ -1,13 +1,10 @@
 package wevioz.social_network.controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import wevioz.social_network.dto.GroupGetDto;
-import wevioz.social_network.dto.GroupPostDto;
+import wevioz.social_network.dto.GroupDto;
+import wevioz.social_network.dto.UserDto;
+import wevioz.social_network.dto.request.GroupPostRequest;
 import wevioz.social_network.dto.GroupUserDto;
-import wevioz.social_network.dto.UserGetDto;
-import wevioz.social_network.entity.Group;
-import wevioz.social_network.entity.User;
 import wevioz.social_network.service.GroupService;
 
 import java.util.List;
@@ -22,36 +19,34 @@ public class GroupController {
     }
 
     @GetMapping
-    public List<GroupGetDto> get() {
+    public List<GroupDto> get() {
         return groupService.getGroups();
     }
 
     @GetMapping("/{id}")
-    public GroupGetDto findById(
+    public GroupDto findById(
             @PathVariable int id
     ) {
         return groupService.findById(id);
     }
 
     @GetMapping("/{id}/participants")
-    public List<User> findGroupParticipantsById(
-            @PathVariable int id
-    ) {
+    public List<UserDto> findGroupParticipantsById(@PathVariable int id) {
         return groupService.getGroupUsersById(id);
     }
 
     @DeleteMapping("/{id}")
-    public GroupGetDto delete(@PathVariable int id) {
+    public GroupDto delete(@PathVariable int id) {
         return groupService.delete(id);
     }
 
     @PostMapping
-    public GroupGetDto create(@RequestBody GroupPostDto groupPostDto) {
-        return groupService.create(groupPostDto);
+    public GroupDto create(@RequestBody GroupPostRequest groupPostRequest) {
+        return groupService.create(groupPostRequest);
     }
 
     @PutMapping("/add")
-    public GroupGetDto addParticipant(
+    public GroupDto addParticipant(
         @RequestBody GroupUserDto groupUserDto
     ) {
         return groupService.addParticipantById(
@@ -61,9 +56,7 @@ public class GroupController {
     }
 
     @PutMapping("/remove")
-    public GroupGetDto removeParticipant(
-            @RequestBody GroupUserDto groupUserDto
-    ) {
+    public GroupDto removeParticipant(@RequestBody GroupUserDto groupUserDto) {
         return groupService.removeParticipantById(
                 groupUserDto.getGroupId(),
                 groupUserDto.getUserId()

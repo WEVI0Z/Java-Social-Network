@@ -1,14 +1,10 @@
 package wevioz.social_network.service;
 
-import jakarta.annotation.PostConstruct;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import wevioz.social_network.dto.PostCreateDto;
-import wevioz.social_network.dto.PostGetDto;
-import wevioz.social_network.dto.UserGetDto;
-import wevioz.social_network.entity.Comment;
-import wevioz.social_network.entity.Group;
+import wevioz.social_network.dto.UserDto;
+import wevioz.social_network.dto.request.PostCreateRequest;
+import wevioz.social_network.dto.PostDto;
 import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
@@ -17,10 +13,8 @@ import wevioz.social_network.mapper.PostMapper;
 import wevioz.social_network.mapper.UserMapper;
 import wevioz.social_network.repository.PostRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +26,7 @@ public class PostService implements EntityService<Post>{
     private final UserMapper userMapper;
     private final PostMapper postMapper;
 
-    public List<PostGetDto> getPosts() {
+    public List<PostDto> getPosts() {
         return postMapper.toGetDtoList(postRepository.findAll());
     }
 
@@ -44,25 +38,25 @@ public class PostService implements EntityService<Post>{
         return new Post(content, owner);
     }
 
-    public PostGetDto create(PostCreateDto postCreateDto) {
-        UserGetDto userGetDto = userService.findById(postCreateDto.getUserId());
+    public PostDto create(PostCreateRequest postCreateRequest) {
+        UserDto userDto = userService.findById(postCreateRequest.getUserId());
 
-        Post post = createInstance(postCreateDto.getContent(), userMapper.toEntity(userGetDto));
+        Post post = createInstance(postCreateRequest.getContent(), userMapper.toEntity(userDto));
 
         add(post);
 
         return postMapper.toGetDto(post);
     }
 
-    public PostGetDto delete(int id) {
-        PostGetDto postGetDto = findById(id);
+    public PostDto delete(int id) {
+        PostDto postDto = findById(id);
 
-        remove(postMapper.toEntity(postGetDto));
+        remove(postMapper.toEntity(postDto));
 
-        return postGetDto;
+        return postDto;
     }
 
-    public PostGetDto findById(int id) throws NotFoundException {
+    public PostDto findById(int id) throws NotFoundException {
         Optional<Post> post = postRepository.findById((long) id);
 
         if(post.isEmpty()) {

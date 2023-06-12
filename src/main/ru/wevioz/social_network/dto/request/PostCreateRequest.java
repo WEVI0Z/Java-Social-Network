@@ -1,14 +1,12 @@
-package wevioz.social_network.dto;
+package wevioz.social_network.dto.request;
 
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.NumberFormat;
 
 @Getter
 @Setter
-public class PostCreateDto {
+public class PostCreateRequest {
     @Min(0)
     private int userId;
 
