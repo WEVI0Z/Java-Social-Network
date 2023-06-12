@@ -26,8 +26,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public class CommentService implements EntityService<Comment> {
     public final static int TEXT_LIMIT = 100;
-    private static AtomicInteger nextId = new AtomicInteger(0);
-    private ArrayList<Comment> comments = new ArrayList<>();
 
     private final PostService postService;
     private final UserService userService;
@@ -37,11 +35,7 @@ public class CommentService implements EntityService<Comment> {
     private final CommentMapper commentMapper;
 
     public List<CommentGetDto> getComments() {
-        List<CommentGetDto> comments = new ArrayList<>();
-
-        commentRepository.findAll().forEach(comment -> comments.add(commentMapper.toGetDto(comment)));
-
-        return comments;
+        return commentMapper.toGetDtoList(commentRepository.findAll());
     }
 
     @Override

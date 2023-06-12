@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: "1684409969"
+      author: garkaviy
+      preConditions:
+        - onFail: HALT
+        - onError: HALT
+      changes:
+        - sqlFile:
+            dbms: postgresql
+            path: db/changelog/v1.0.0/cr/insert_tables.sql

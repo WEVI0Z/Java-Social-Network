@@ -27,11 +27,7 @@ public class GroupService implements EntityService<Group> {
     private final GroupMapper groupMapper;
 
     public List<GroupGetDto> getGroups() {
-        List<GroupGetDto> groups = new ArrayList<>();
-
-        groupRepository.findAll().forEach(group -> groups.add(groupMapper.toGetDto(group)));
-
-        return groups;
+        return groupMapper.toGetDtoList(groupRepository.findAll());
     }
 
     public Group createInstance(String name) {

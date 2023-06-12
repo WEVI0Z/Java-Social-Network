@@ -30,9 +30,7 @@ public class Group {
     )
     private List<User> participants;
 
-    public Group(
-            String name
-    ) {
+    public Group(String name) {
         this.name = name;
     }
 }

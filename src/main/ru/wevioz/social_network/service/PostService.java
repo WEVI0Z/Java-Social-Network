@@ -33,11 +33,7 @@ public class PostService implements EntityService<Post>{
     private final PostMapper postMapper;
 
     public List<PostGetDto> getPosts() {
-        List<PostGetDto> posts = new ArrayList<>();
-
-        postRepository.findAll().forEach(post -> posts.add(postMapper.toGetDto(post)));
-
-        return posts;
+        return postMapper.toGetDtoList(postRepository.findAll());
     }
 
     public Post createInstance(String content, User owner) throws TextLimitException {

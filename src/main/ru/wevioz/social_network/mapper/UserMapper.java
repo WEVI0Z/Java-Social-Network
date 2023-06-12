@@ -5,6 +5,8 @@ import org.mapstruct.Mapping;
 import wevioz.social_network.dto.UserGetDto;
 import wevioz.social_network.entity.User;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     @Mapping(target = "id", source = "entity.id")
@@ -14,4 +16,6 @@ public interface UserMapper {
     @Mapping(target = "id", source = "dto.id")
     @Mapping(target = "email", source = "dto.email")
     User toEntity(UserGetDto dto);
+
+    List<UserGetDto> toGetDtoList(List<User> list);
 }

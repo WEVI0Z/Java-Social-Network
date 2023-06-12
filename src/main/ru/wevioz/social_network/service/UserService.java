@@ -30,8 +30,8 @@ public class UserService implements EntityService<User> {
 
     public List<UserGetDto> get() {
         List<UserGetDto> users = new ArrayList<>();
-        userRepository.findAll().forEach(user -> System.out.println(user.getEmail()));
-        userRepository.findAll().forEach(user -> users.add(userMapper.toGetDto(user)));
+
+        userRepository.findAll().forEach(user -> userMapper.toGetDto(user));
 
         return users;
     }
