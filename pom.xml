@@ -58,10 +58,6 @@
             <artifactId>mapstruct-processor</artifactId>
             <version>1.5.5.Final</version>
         </dependency>
-        <dependency>
-            <groupId>org.liquibase</groupId>
-            <artifactId>liquibase-core</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
@@ -69,9 +65,10 @@
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
-                <version>4.2.0</version>
+                <version>4.22.0</version>
                 <configuration>
                     <propertyFile>src/main/resources/liquibase.properties</propertyFile>
+                    <changeLogFile>src/main/resources/db/changelog/db.changelog-master.xml</changeLogFile>
                 </configuration>
             </plugin>
             <plugin>

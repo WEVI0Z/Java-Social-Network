@@ -9,7 +9,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
         http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd">
     <changeSet id="insert_users_table" author="Garakviy">
-        <createTable tableName="users">
+        <createTable tableName="user_group">
             <column name="user_id" type="int">
                 <constraints
                         primaryKey="true"
