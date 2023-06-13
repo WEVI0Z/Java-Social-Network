@@ -1,93 +1,78 @@
 package wevioz.social_network.service;
 
-import jakarta.annotation.PostConstruct;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import wevioz.social_network.dto.PostCreateDto;
-import wevioz.social_network.entity.Comment;
-import wevioz.social_network.entity.Group;
+import wevioz.social_network.dto.UserDto;
+import wevioz.social_network.dto.request.PostCreateRequest;
+import wevioz.social_network.dto.PostDto;
 import wevioz.social_network.entity.Post;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.exception.TextLimitException;
+import wevioz.social_network.mapper.PostMapper;
+import wevioz.social_network.mapper.UserMapper;
+import wevioz.social_network.repository.PostRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
 public class PostService implements EntityService<Post>{
     public final int TEXT_LIMIT = 200;
-    private static AtomicInteger nextId = new AtomicInteger(0);
-    private ArrayList<Post> posts = new ArrayList<>();
 
     private final UserService userService;
+    private final PostRepository postRepository;
+    private final UserMapper userMapper;
+    private final PostMapper postMapper;
 
-    @PostConstruct
-    private void postConstruct() {
-        create(new PostCreateDto(2, "Some Text 2"));
-        create(new PostCreateDto(1, "Some Text 3"));
-        create(new PostCreateDto(1, "Some Text 4"));
+    public List<PostDto> getPosts() {
+        return postMapper.toGetDtoList(postRepository.findAll());
     }
 
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public Post createInstance(String content, User owner) throws TextLimitException {
+    public Post createInstance(String content, User owner) {
         if (content.length() > TEXT_LIMIT) {
             throw new TextLimitException("content", TEXT_LIMIT);
         }
 
-        return new Post(nextId.getAndIncrement(), content, owner);
+        return new Post(content, owner);
     }
 
-    public List<Comment> getPostCommentsById(int id) throws NotFoundException {
-        return findById(id).getComments();
-    }
+    public PostDto create(PostCreateRequest postCreateRequest) {
+        UserDto userDto = userService.findById(postCreateRequest.getUserId());
 
-    public Post create(PostCreateDto postCreateDto) {
-        User user = userService.findById(postCreateDto.getUserId());
-
-        Post post = createInstance(postCreateDto.getContent(), user);
-
-        user.getPosts().add(post);
+        Post post = createInstance(postCreateRequest.getContent(), userMapper.toEntity(userDto));
 
         add(post);
 
-        return post;
+        return postMapper.toGetDto(post);
     }
 
-    public Post delete(int id) {
-        Post post = findById(id);
-        post.getOwner().getPosts().remove(post);
+    public PostDto delete(int id) {
+        PostDto postDto = findById(id);
 
-        remove(post);
+        remove(postMapper.toEntity(postDto));
 
-        return post;
+        return postDto;
     }
 
-    @Override
-    public Post findById(int id) throws NotFoundException {
-        Optional<Post> post = posts.stream().filter(item -> item.getId() == id).findFirst();
+    public PostDto findById(int id) {
+        Optional<Post> post = postRepository.findById((long) id);
 
-        if(post.isPresent()) {
-            return post.get();
-        } else {
+        if(post.isEmpty()) {
             throw new NotFoundException("post");
         }
+
+        return postMapper.toGetDto(post.get());
     }
 
     @Override
     public void add(Post post) {
-        posts.add(post);
+        postRepository.save(post);
     }
 
     @Override
     public void remove(Post post) {
-        posts.remove(post);
+        postRepository.delete(post);
     }
 }

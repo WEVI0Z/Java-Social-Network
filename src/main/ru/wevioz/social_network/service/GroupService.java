@@ -1,82 +1,100 @@
 package wevioz.social_network.service;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import wevioz.social_network.dto.GroupPostDto;
+import wevioz.social_network.dto.GroupDto;
+import wevioz.social_network.dto.UserDto;
+import wevioz.social_network.dto.request.GroupPostRequest;
 import wevioz.social_network.entity.Group;
-import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
+import wevioz.social_network.mapper.GroupMapper;
+import wevioz.social_network.mapper.UserMapper;
+import wevioz.social_network.repository.GroupRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 @RequiredArgsConstructor
 public class GroupService implements EntityService<Group> {
-    private static AtomicInteger nextId = new AtomicInteger(0);
-    private ArrayList<Group> groups = new ArrayList<>();
-
     private final UserService userService;
+    private final GroupRepository groupRepository;
+    private final UserMapper userMapper;
+    private final GroupMapper groupMapper;
 
-    public List<Group> getGroups() {
-        return groups;
+    public List<GroupDto> getGroups() {
+        return groupMapper.toGetDtoList(groupRepository.findAll());
     }
 
     public Group createInstance(String name) {
-        return new Group(nextId.getAndIncrement(), name);
+        return new Group(name);
     }
 
-    @Override
-    public Group findById(int id) throws NotFoundException {
-        Optional<Group> group = groups.stream().filter(item -> item.getId() == id).findFirst();
+    public GroupDto findById(int id) {
+        Optional<Group> group = groupRepository.findById((long) id);
 
-        if(group.isPresent()) {
-            return group.get();
-        } else {
+        if(group.isEmpty()) {
             throw new NotFoundException("user");
         }
+
+        return groupMapper.toGetDto(group.get());
     }
 
-    public Group create(GroupPostDto groupPostDto) {
-        Group group = createInstance(groupPostDto.getName());
+    public GroupDto create(GroupPostRequest groupPostRequest) {
+        Group group = createInstance(groupPostRequest.getName());
 
         add(group);
 
-        return group;
+        return groupMapper.toGetDto(group);
     }
 
-    public Group addParticipantById(int groupId, int participantId) {
-        Group group = findById(groupId);
-        User user = userService.findById(participantId);
+    public GroupDto addParticipantById(int groupId, int participantId) {
+        GroupDto groupDto = findById(groupId);
+        Group group = groupMapper.toEntity(groupDto);
+        UserDto userDto = userService.findById(participantId);
 
-        group.getParticipants().add(user);
+        group.getParticipants().add(userMapper.toEntity(userDto));
 
-        return group;
+        groupRepository.save(group);
+
+        return groupDto;
     }
 
-    public Group removeParticipantById(int groupId, int participantId) {
-        Group group = findById(groupId);
-        User user = userService.findById(participantId);
+    public GroupDto removeParticipantById(int groupId, int participantId) {
+        GroupDto groupDto = findById(groupId);
+        Group group = groupMapper.toEntity(groupDto);
+        UserDto userDto = userService.findById(participantId);
 
-        group.getParticipants().remove(user);
+        group.getParticipants().remove(userMapper.toEntity(userDto));
 
-        return group;
+        groupRepository.save(group);
+
+        return groupDto;
     }
 
-    public List<User> getGroupUsersById(int id) throws NotFoundException {
+    public List<UserDto> getGroupUsersById(int id) throws NotFoundException {
         return findById(id).getParticipants();
     }
 
     @Override
     public void add(Group group) {
-        groups.add(group);
+        groupRepository.save(group);
     }
 
     @Override
     public void remove(Group group) {
-        groups.remove(group);
+        groupRepository.delete(group);
+    }
+
+    public GroupDto delete(int id) {
+        GroupDto groupDto = findById(id);
+        Group group = groupMapper.toEntity(groupDto);
+
+        group.setParticipants(new ArrayList<>());
+
+        groupRepository.delete(group);
+
+        return groupDto;
     }
 }

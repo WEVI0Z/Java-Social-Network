@@ -1,10 +1,8 @@
 package wevioz.social_network.controller;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import wevioz.social_network.dto.CommentCreateDto;
-import wevioz.social_network.dto.PostCreateDto;
-import wevioz.social_network.entity.Comment;
+import wevioz.social_network.dto.CommentDto;
+import wevioz.social_network.dto.request.CommentCreateRequest;
 import wevioz.social_network.service.CommentService;
 
 import java.util.List;
@@ -19,22 +17,22 @@ public class CommentController {
     }
 
     @GetMapping
-    public List<Comment> get() {
+    public List<CommentDto> get() {
         return commentService.getComments();
     }
 
     @GetMapping("/{id}")
-    public Comment getById(@PathVariable int id) {
+    public CommentDto getById(@PathVariable int id) {
         return commentService.findById(id);
     }
 
     @PostMapping
-    public Comment post(@RequestBody CommentCreateDto commentCreateDto) {
-        return commentService.create(commentCreateDto);
+    public CommentDto post(@RequestBody CommentCreateRequest commentCreateRequest) {
+        return commentService.create(commentCreateRequest);
     }
 
     @DeleteMapping("/{id}")
-    public Comment delete(@PathVariable int id) {
+    public CommentDto delete(@PathVariable int id) {
         return commentService.delete(id);
     }
 }

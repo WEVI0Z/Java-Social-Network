@@ -18,3 +18,11 @@ User (id, email, posts), Post (id, owner, content, comments, creationTime), Grou
 Использовать:
 * Maven
 * Lombok
+
+## База данных
+### Подключение по умолчанию
+```
+    Пароль: pass123
+    Пользователь: postgres
+    База данных: postgres
+```

@@ -1,78 +1,72 @@
 package wevioz.social_network.service;
 
-import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpStatusCodeException;
-import wevioz.social_network.dto.UserPostDto;
-import wevioz.social_network.entity.Post;
+import wevioz.social_network.dto.UserDto;
+import wevioz.social_network.dto.request.UserPostRequest;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.exception.UniqueException;
+import wevioz.social_network.mapper.UserMapper;
+import wevioz.social_network.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
 @Service
+@RequiredArgsConstructor
 public class UserService implements EntityService<User> {
-    private static AtomicInteger nextId = new AtomicInteger(0);
-    private ArrayList<User> users = new ArrayList<>();
+    private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    @PostConstruct
-    private void postConstruct() {
-        users.add(new User(nextId.getAndIncrement(), "Wevioz"));
-        users.add(new User(nextId.getAndIncrement(), "Alex"));
-        users.add(new User(nextId.getAndIncrement(), "Pioter"));
-        users.add(new User(nextId.getAndIncrement(), "Folk"));
+    public List<UserDto> get() {
+        return userMapper.toGetDtoList(userRepository.findAll());
     }
 
-    public User createInstance(String email) throws UniqueException {
-        if (users.stream().anyMatch(user -> user.getEmail().equals(email))) {
+    public User createInstance(String email) {
+        Optional<User> sameUser = userRepository.findUserByEmail(email);
+
+        if (sameUser.isPresent()) {
             throw new UniqueException("email");
         }
-        return new User(nextId.getAndIncrement(), email);
+
+        return new User(email);
     }
 
-    public User create(UserPostDto userPostDto) {
-        User user = createInstance(userPostDto.getEmail());
+    public UserDto create(UserPostRequest userPostRequest) {
+        User user = createInstance(userPostRequest.getEmail());
 
         add(user);
 
-        return user;
+        return userMapper.toGetDto(user);
     }
 
-    public List<Post> getUserPostsById(int id) throws NotFoundException {
-        return findById(id).getPosts();
-    }
+    public UserDto findById(int id) {
+        Optional<User> user = userRepository.findById((long) id);
 
-    @Override
-    public User findById(int id) throws NotFoundException {
-        Optional<User> user = users.stream().filter(item -> item.getId() == id).findFirst();
-
-        if(user.isPresent()) {
-            return user.get();
-        } else {
+        if(user.isEmpty()) {
             throw new NotFoundException("user");
         }
+
+        return userMapper.toGetDto(user.get());
     }
 
     @Override
     public void add(User user) {
-        users.add(user);
+        userRepository.save(user);
     }
 
     @Override
     public void remove(User user) {
-        users.remove(user);
+        userRepository.delete(user);
     }
 
-    public User removeById(int id) {
-        User user = findById(id);
+    public UserDto removeById(int id) {
+        UserDto user = findById(id);
 
-        remove(user);
+        remove(userMapper.toEntity(user));
 
         return user;
     }
