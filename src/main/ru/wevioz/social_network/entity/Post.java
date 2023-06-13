@@ -35,10 +35,7 @@ public class Post {
     @Column(name = "creation_date")
     private LocalDate creationDate = LocalDate.now();
 
-    public Post(
-            String content,
-            User owner
-    ) {
+    public Post(String content, User owner) {
         this.content = content;
         this.owner = owner;
     }

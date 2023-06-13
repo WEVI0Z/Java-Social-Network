@@ -31,7 +31,7 @@ public class GroupService implements EntityService<Group> {
         return new Group(name);
     }
 
-    public GroupDto findById(int id) throws NotFoundException {
+    public GroupDto findById(int id) {
         Optional<Group> group = groupRepository.findById((long) id);
 
         if(group.isEmpty()) {

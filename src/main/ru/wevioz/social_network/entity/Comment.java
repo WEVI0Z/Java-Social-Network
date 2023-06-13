@@ -32,11 +32,7 @@ public class Comment {
     @Column(name = "creation_time")
     private final LocalDate creationTime = LocalDate.now();
 
-    public Comment(
-            String content,
-            User owner,
-            Post post
-    ) {
+    public Comment(String content, User owner, Post post) {
         this.content = content;
         this.owner = owner;
         this.post = post;

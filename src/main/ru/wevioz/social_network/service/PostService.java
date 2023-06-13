@@ -30,7 +30,7 @@ public class PostService implements EntityService<Post>{
         return postMapper.toGetDtoList(postRepository.findAll());
     }
 
-    public Post createInstance(String content, User owner) throws TextLimitException {
+    public Post createInstance(String content, User owner) {
         if (content.length() > TEXT_LIMIT) {
             throw new TextLimitException("content", TEXT_LIMIT);
         }
@@ -56,7 +56,7 @@ public class PostService implements EntityService<Post>{
         return postDto;
     }
 
-    public PostDto findById(int id) throws NotFoundException {
+    public PostDto findById(int id) {
         Optional<Post> post = postRepository.findById((long) id);
 
         if(post.isEmpty()) {

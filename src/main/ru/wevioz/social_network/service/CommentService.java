@@ -45,7 +45,7 @@ public class CommentService implements EntityService<Comment> {
         commentRepository.delete(comment);
     }
 
-    public CommentDto findById(int id) throws NotFoundException {
+    public CommentDto findById(int id) {
         Optional<Comment> comment = commentRepository.findById((long) id);
 
         if(comment.isEmpty()) {
