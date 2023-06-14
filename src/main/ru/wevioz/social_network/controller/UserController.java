@@ -3,6 +3,7 @@ package wevioz.social_network.controller;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -45,7 +46,7 @@ public class UserController {
         return userService.create(userPostRequest);
     }
 
-    @PostMapping("login")
+    @PostMapping(path = "login", produces = MediaType.APPLICATION_JSON_VALUE)
     public UserDto getAuthUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
