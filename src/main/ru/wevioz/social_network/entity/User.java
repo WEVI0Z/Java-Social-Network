@@ -23,6 +23,10 @@ public class User {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "password")
+    private String password;
+
+
     @OneToMany(mappedBy = "owner")
     @JsonIgnore
     private List<Post> posts;
@@ -35,7 +39,8 @@ public class User {
     @JsonIgnore
     private List<Group> groups;
 
-    public User(String email) {
+    public User(String email, String password) {
         this.email = email;
+        this.password = password;
     }
 }

@@ -11,4 +11,8 @@ public class UserPostRequest {
     @NotNull(message = "Field email required")
     @NotEmpty(message = "Field email is empty")
     private String email;
+
+    @NotNull(message = "Field email required")
+    @NotEmpty(message = "Field email is empty")
+    private String password;
 }

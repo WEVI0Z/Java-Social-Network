@@ -11,10 +11,12 @@ import java.util.List;
 public interface UserMapper {
     @Mapping(target = "id", source = "entity.id")
     @Mapping(target = "email", source = "entity.email")
+    @Mapping(target = "password", source = "entity.password")
     UserDto toGetDto(User entity);
 
     @Mapping(target = "id", source = "dto.id")
     @Mapping(target = "email", source = "dto.email")
+    @Mapping(target = "password", source = "dto.password")
     User toEntity(UserDto dto);
 
     List<UserDto> toGetDtoList(Iterable<User> iterable);
