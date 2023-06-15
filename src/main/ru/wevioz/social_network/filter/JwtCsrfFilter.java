@@ -13,6 +13,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import wevioz.social_network.service.JwtService;
+import wevioz.social_network.service.UserDetailsService;
 import wevioz.social_network.service.UserService;
 
 import java.io.IOException;
@@ -22,7 +23,7 @@ import java.io.IOException;
 public class JwtCsrfFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserService userService;
+    private final UserDetailsService userService;
 
     @Override
     protected void doFilterInternal(

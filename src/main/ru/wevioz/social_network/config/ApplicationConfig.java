@@ -9,12 +9,13 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import wevioz.social_network.service.UserDetailsService;
 import wevioz.social_network.service.UserService;
 
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-    private final UserService userService;
+    private final UserDetailsService userService;
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
