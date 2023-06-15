@@ -1,113 +1,40 @@
 package wevioz.social_network.filter;
 
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.security.web.csrf.InvalidCsrfTokenException;
-import org.springframework.security.web.csrf.MissingCsrfTokenException;
-import org.springframework.security.web.util.UrlUtils;
-import org.springframework.util.StringUtils;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
-import wevioz.social_network.repository.JwtTokenRepository;
+import wevioz.social_network.service.JwtService;
 
 import java.io.IOException;
 
+@Component
+@RequiredArgsConstructor
 public class JwtCsrfFilter extends OncePerRequestFilter {
-    private final CsrfTokenRepository tokenRepository;
 
-    private final HandlerExceptionResolver resolver;
-
-    public JwtCsrfFilter(
-            CsrfTokenRepository tokenRepository,
-            HandlerExceptionResolver resolver
-    ) {
-        this.tokenRepository = tokenRepository;
-        this.resolver = resolver;
-    }
+    private final JwtService jwtService;
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+            @NotNull HttpServletRequest request,
+            @NotNull HttpServletResponse response,
+            @NotNull FilterChain filterChain
     ) throws ServletException, IOException {
-        request.setAttribute(HttpServletResponse.class.getName(), response);
-        CsrfToken csrfToken = this.tokenRepository.loadToken(request);
-        boolean missingToken = csrfToken == null;
+        final String authHeder = request.getHeader("Authorization");
+        final String jwt;
+        final String userEmail;
 
-        if (missingToken) {
-            csrfToken = this.tokenRepository.generateToken(request);
-            this.tokenRepository.saveToken(csrfToken, request, response);
+        if (authHeder == null || !authHeder.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+
+            return;
         }
 
-        request.setAttribute(CsrfToken.class.getName(), csrfToken);
-        request.setAttribute(csrfToken.getParameterName(), csrfToken);
-
-        System.out.println(request.getServletPath());
-
-        if (request.getServletPath().equals("/users/login")) {
-            try {
-                filterChain.doFilter(request, response);
-            } catch (Exception e) {
-                resolver.resolveException(
-                        request,
-                        response,
-                        null,
-                        new MissingCsrfTokenException(csrfToken.getToken())
-                );
-            }
-        } else {
-            String actualToken = request.getParameter(csrfToken.getHeaderName());
-
-            if (actualToken == null) {
-                actualToken = request.getParameter(csrfToken.getParameterName());
-            }
-
-            try {
-                if (StringUtils.hasText(actualToken)) {
-                    Jwts.parser()
-                            .setSigningKey(((JwtTokenRepository) tokenRepository).getSecret())
-                            .parseClaimsJws(actualToken);
-
-                    filterChain.doFilter(request, response);
-                } else {
-                    resolver.resolveException(
-                            request,
-                            response,
-                            null,
-                            new InvalidCsrfTokenException(csrfToken, actualToken)
-                    );
-                }
-            } catch (JwtException e) {
-                if (this.logger.isDebugEnabled()) {
-                    this.logger.debug(
-                            "Invalid CSRF token found for "
-                            + UrlUtils.buildFullRequestUrl(request)
-                    );
-                }
-
-                if (missingToken) {
-                    resolver.resolveException(
-                            request,
-                            response,
-                            null,
-                            new MissingCsrfTokenException(actualToken)
-                    );
-                } else {
-                    resolver.resolveException(
-                            request,
-                            response,
-                            null,
-                            new InvalidCsrfTokenException(csrfToken, actualToken)
-                    );
-                }
-            }
-        }
+        jwt = authHeder.substring(7);
+        userEmail = jwtService.extractUsername(jwt);
     }
 }
