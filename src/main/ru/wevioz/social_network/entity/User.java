@@ -27,6 +27,14 @@ public class User implements UserDetails {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "city")
+    private String city;
+
+
+    @Column(name = "country")
+    private String country;
+
+
     @Column(name = "password")
     private String password;
 
@@ -46,9 +54,11 @@ public class User implements UserDetails {
     @JsonIgnore
     private List<Group> groups;
 
-    public User(String email, String password) {
+    public User(String email, String password, String city, String country) {
         this.email = email;
         this.password = password;
+        this.city = city;
+        this.country = country;
     }
 
     @Override

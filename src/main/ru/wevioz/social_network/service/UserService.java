@@ -17,7 +17,9 @@ import wevioz.social_network.entity.Role;
 import wevioz.social_network.entity.User;
 import wevioz.social_network.exception.NotFoundException;
 import wevioz.social_network.exception.UniqueException;
+import wevioz.social_network.mapper.StatMapper;
 import wevioz.social_network.mapper.UserMapper;
+import wevioz.social_network.publisher.StatPublisher;
 import wevioz.social_network.repository.UserRepository;
 
 import java.util.HashSet;
@@ -30,22 +32,24 @@ import java.util.Optional;
 public class UserService implements EntityService<User> {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final StatMapper statMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final StatPublisher statPublisher;
 
     public List<UserDto> get() {
         return userMapper.toGetDtoList(userRepository.findAll());
     }
 
-    public User createInstance(String email, String password) {
+    public User createInstance(String email, String password, String city, String country) {
         Optional<User> sameUser = userRepository.findUserByEmail(email);
 
         if (sameUser.isPresent()) {
             throw new UniqueException("email");
         }
 
-        return new User(email, passwordEncoder.encode(password));
+        return new User(email, passwordEncoder.encode(password), city, country);
     }
 
     public UserDto findByEmail(String email) {
@@ -58,15 +62,19 @@ public class UserService implements EntityService<User> {
         return userMapper.toGetDto(user.get());
     }
 
-    public TokenDto create(UserPostRequest userPostRequest) {
+    public UserDto create(UserPostRequest userPostRequest) {
         User user = createInstance(
                 userPostRequest.getEmail(),
-                userPostRequest.getPassword()
+                userPostRequest.getPassword(),
+                userPostRequest.getCity(),
+                userPostRequest.getCountry()
         );
+
+        statPublisher.send(statMapper.toDto(user));
 
         add(user);
 
-        return new TokenDto(jwtService.generateToken(user));
+        return userMapper.toGetDto(user);
     }
 
     public TokenDto authenticate(UserPostRequest userPostRequest) {
