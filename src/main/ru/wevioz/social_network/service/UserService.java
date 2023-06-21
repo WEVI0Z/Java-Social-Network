@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import wevioz.social_network.dto.StatDto;
 import wevioz.social_network.dto.TokenDto;
 import wevioz.social_network.dto.UserDto;
 import wevioz.social_network.dto.request.UserPostRequest;
@@ -22,6 +23,7 @@ import wevioz.social_network.mapper.UserMapper;
 import wevioz.social_network.publisher.StatPublisher;
 import wevioz.social_network.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -70,7 +72,10 @@ public class UserService implements EntityService<User> {
                 userPostRequest.getCountry()
         );
 
-        statPublisher.send(statMapper.toDto(user));
+        StatDto statDto = statMapper.toDto(user);
+        statDto.setCreationDate(LocalDate.now());
+
+        statPublisher.send(statDto);
 
         add(user);
 
