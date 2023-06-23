@@ -1,5 +1,6 @@
 package wevioz.social_network.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import wevioz.social_network.dto.GroupDto;
 import wevioz.social_network.dto.UserDto;
@@ -11,12 +12,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/groups")
+@RequiredArgsConstructor
 public class GroupController {
     private final GroupService groupService;
-
-    private GroupController(GroupService groupService) {
-        this.groupService = groupService;
-    }
 
     @GetMapping
     public List<GroupDto> get() {

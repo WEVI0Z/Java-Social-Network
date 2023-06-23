@@ -1,5 +1,6 @@
 package wevioz.social_network.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import wevioz.social_network.dto.PostDto;
@@ -11,13 +12,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
+@RequiredArgsConstructor
 public class PostController {
     private final PostService postService;
-
-    @Autowired
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
 
     @GetMapping
     public List<PostDto> get() {

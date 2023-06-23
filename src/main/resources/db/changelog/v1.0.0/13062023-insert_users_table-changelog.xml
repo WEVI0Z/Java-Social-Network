@@ -14,6 +14,8 @@
                 <constraints primaryKey="true"/>
             </column>
             <column name="email" type="varchar"/>
+            <column name="password" type="varchar"/>
+            <column name="role" type="varchar" defaultValue="USER"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

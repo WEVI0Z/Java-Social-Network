@@ -1,5 +1,6 @@
 package wevioz.social_network.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import wevioz.social_network.dto.CommentDto;
 import wevioz.social_network.dto.request.CommentCreateRequest;
@@ -9,12 +10,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/comments")
+@RequiredArgsConstructor
 public class CommentController {
     private final CommentService commentService;
-
-    private CommentController(CommentService commentService) {
-        this.commentService = commentService;
-    }
 
     @GetMapping
     public List<CommentDto> get() {

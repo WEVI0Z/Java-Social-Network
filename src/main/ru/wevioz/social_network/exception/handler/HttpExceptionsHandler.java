@@ -1,6 +1,5 @@
 package wevioz.social_network.exception.handler;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +30,9 @@ public class HttpExceptionsHandler extends ResponseEntityExceptionHandler {
     ) {
         List<String> messageKeys = exception.getBindingResult().getFieldErrors().stream()
                 .map(fieldError -> {
-                    return Arrays.stream(Objects.requireNonNull(fieldError.getCodes())).findFirst().orElse(null);
+                    return Arrays.stream(Objects.requireNonNull(fieldError.getCodes()))
+                            .findFirst()
+                            .orElse(null);
                 }).toList();
         ErrorDto errorDto = new ErrorDto(messageKeys, exception);
         return new ResponseEntity<>(errorDto, HttpStatus.INTERNAL_SERVER_ERROR);
