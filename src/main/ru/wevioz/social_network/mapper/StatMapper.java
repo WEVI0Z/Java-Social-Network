@@ -6,9 +6,6 @@ import wevioz.social_network.dto.StatDto;
 import wevioz.social_network.dto.UserDto;
 import wevioz.social_network.entity.User;
 
-import java.time.LocalDate;
-import java.util.Date;
-
 @Mapper(componentModel = "spring")
 public interface StatMapper {
     @Mapping(target = "name", source = "dto.email")

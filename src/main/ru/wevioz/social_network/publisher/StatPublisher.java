@@ -5,7 +5,6 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Component;
 import wevioz.social_network.dto.StatDto;
-import wevioz.social_network.dto.UserDto;
 
 @Component
 @RequiredArgsConstructor
