@@ -24,6 +24,7 @@ import wevioz.social_network.publisher.StatPublisher;
 import wevioz.social_network.repository.UserRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -73,7 +74,7 @@ public class UserService implements EntityService<User> {
         );
 
         StatDto statDto = statMapper.toDto(user);
-        statDto.setCreationDate(LocalDate.now());
+        statDto.setCreationDate(LocalDateTime.now());
 
         statPublisher.send(statDto);
 
